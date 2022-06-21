@@ -1,0 +1,4 @@
+name = "QuadRules"
+uuid = "d59a0852-60f8-41d7-a4c3-b3a40500c1b4"
+authors = ["Joshua Tetzner <joshua.tetzner@igp.fraunhofer.de>"]
+version = "0.1.0"
