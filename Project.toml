@@ -2,3 +2,8 @@ name = "QuadRules"
 uuid = "d59a0852-60f8-41d7-a4c3-b3a40500c1b4"
 authors = ["Joshua Tetzner <joshua.tetzner@igp.fraunhofer.de>"]
 version = "0.1.0"
+
+[deps]
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+SpecialPolynomials = "a25cea48-d430-424a-8ee7-0d3ad3742e9e"
