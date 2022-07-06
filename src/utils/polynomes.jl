@@ -14,14 +14,14 @@ function dchebychev(n, x::T) where {T <: AbstractFloat}
 end
 
 # Shifted chebychev polynomials
-function schebychev(n, x::T, a::T, b::T) where {T <: AbstractFloat}
-    xs = 2 * (x - a) / (b - a) - 1
+function schebychev(n, x::T, a, b) where {T <: AbstractFloat}
+    xs = 2 * (x - a) / T(b - a) - 1
     return basis.(SpecialPolynomials.Chebyshev, n)(xs)
 end
 
-function dschebychev(n, x::T, a::T, b::T) where {T <: AbstractFloat}
-    xs = 2 * (x - a) / (b - a) - 1
-    din = 2 / (b - a)
+function dschebychev(n, x::T, a, b) where {T <: AbstractFloat}
+    xs = 2 * (x - a) / T(b - a) - 1
+    din = 2 / T(b - a)
     if n > 0
         return din * n * basis.(SpecialPolynomials.ChebyshevU, n-1)(xs)
     else
@@ -29,12 +29,12 @@ function dschebychev(n, x::T, a::T, b::T) where {T <: AbstractFloat}
     end
 end
 
-function intschebychev(n, a::T, b::T) where {T <: AbstractFloat}
-    dincheb = 2 / (b-a)
+function intschebychev(n, a, b)
+    dincheb = 2 / big(b-a)
     if n == 1
         return 0
     else
-        return 1/dincheb * ((-1)^n + 1) / T(1 - n^2)
+        return 1/dincheb * ((-1)^n + 1) / big(1 - n^2)
     end
 end
 

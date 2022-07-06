@@ -5,8 +5,8 @@ function dotproduct(veca, vecb)
     lena = length(veca)
     lenb = length(vecb)
     if lena != lenb
-        a = zeros(T, max(lena, lenb))
-        b = zeros(T, max(lena, lenb))
+        a = zeros(max(lena, lenb))
+        b = zeros(max(lena, lenb))
         a[1:lena] = veca
         b[1:lenb] = vecb
         return dot(a, b)
@@ -19,8 +19,8 @@ function substract(veca, vecb)
     lena = length(veca)
     lenb = length(vecb)
     if lena != lenb
-        a = zeros(T, max(lena, lenb))
-        b = zeros(T, max(lena, lenb))
+        a = zeros(max(lena, lenb))
+        b = zeros(max(lena, lenb))
         a[1:lena] = veca
         b[1:lenb] = vecb
         return a .- b
