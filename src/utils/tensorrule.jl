@@ -21,7 +21,6 @@ function tensorrule(
 
         count +=1
     end
-
-    
+   
     return nodes, weights
 end

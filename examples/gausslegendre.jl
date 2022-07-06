@@ -29,3 +29,17 @@ log1polynomial
 log1polynomial
 log01polynomial
 log0polynomial
+
+##
+
+function tester(a, tol)
+    if tol < 1e-16
+        T = BigFloat
+    else
+        T = Float64
+    end
+
+    return T(a)
+end
+
+eltype(tester(1, 1e-25))

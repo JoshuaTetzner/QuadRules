@@ -1,16 +1,16 @@
 using Base.Threads
 
-mutable struct NestedSystem
+mutable struct NestedSystem{T <: AbstractFloat}
     systems::Vector{Matrix}
-    segments::Vector{BigFloat}
+    segments::Vector{T}
     pl::Function
     dpl::Function
-    intpl::Vector
+    intpl::Vector{T}
 end
 
-function nestednodes(nsegments::Int, nnodes::Int, fct)
+function nestednodes(nsegments::Int, nnodes::Int, fct, T)
     function segments(n)
-        s = zeros(BigFloat, n)
+        s = zeros(T, n)
         s[1] = big(0)
         s[n] =big(1)
         for i = 2:n-1
@@ -21,16 +21,16 @@ function nestednodes(nsegments::Int, nnodes::Int, fct)
 
     δ(a) = ==(a,0)
     s = (segments(nsegments))
-    segmentnodes = zeros(BigFloat, nnodes, nsegments-1)
+    segmentnodes = zeros(T, nnodes, nsegments-1)
     for (nc, col) in enumerate(eachcol(segmentnodes))
         xn = [
             1/2 * (s[nc+1] + s[nc]) + 
-            1/2 * (s[nc+1] - s[nc]) * cos(pi * big(k - 1 / 2) / big(nnodes))
+            1/2 * (s[nc+1] - s[nc]) * cos(pi * T(k - 1 / 2) / T(nnodes))
             for k = 1:nnodes
         ]
         for (nn, node) in enumerate(col)
             segmentnodes[nn, nc] = sum([
-                (2-δ(nn-1)) / big(nnodes) * fct(xn[i]) * schebychev(nn-1, xn[i], s[nc], s[nc+1]) 
+                (2-δ(nn-1)) / T(nnodes) * fct(xn[i]) * schebychev(nn-1, xn[i], s[nc], s[nc+1]) 
                 for i = 1:nnodes
             ])
         end
@@ -39,15 +39,23 @@ function nestednodes(nsegments::Int, nnodes::Int, fct)
     return segmentnodes, s
 end
 
-function nestedsystem(order, nsegments, nnodes, fct)
+function nestedsystem(order, nsegments, nnodes, fct; precision=1e-15)
+    #precision
+    T = Float64
+    println(precision)
+    if precision < 1e-16
+        println("Switched BigFloat")
+        T = BigFloat
+    end
 
     systems = Vector{Matrix}(undef, order+1)
-    integrals = zeros(BigFloat, order+1)
+    integrals = zeros(T, order+1)
     seg = []
 
     @threads for nf = 0:order 
         f(x) = fct(nf, x)
-        systems[nf+1], seg = nestednodes(nsegments, nnodes, f)
+        systems[nf+1], seg = nestednodes(nsegments, nnodes, f, T)
+        integrals[nf+1] = quadgk(x->f(x), big(0), big(1), atol = 1e-20)[1]
     end
       
     function approxpl(segmentnodes, seg, x)
@@ -77,4 +85,3 @@ function nestedsystem(order, nsegments, nnodes, fct)
 
     return NestedSystem(systems, seg, approxpl, approxdpl, integrals)
 end
-##

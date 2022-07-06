@@ -95,7 +95,7 @@ end
 function getsystem(nx, X::Vector{T}, order) where {T <: AbstractFloat}
     jk = [[j, k] for k = 0:2:order for j = k:2:order-k]
     F = zeros(T, length(jk))
-    for (x, xjk) in enumerate(jk)#x = 1:length(jk)
+    for (x, xjk) in enumerate(jk)
         xind = 0
         if nx[1] != 0
             F[x] += ln0(X[xind+1], xjk[1], xjk[2])
@@ -226,7 +226,7 @@ function symquadratur(
         F = getsystem(nx, X, order)
         J = jacobian(nx, X, order)
         
-        #LevenbergMarquart
+        #Levenberg-Marquart
         H = transpose(J)*J 
         Xdiff = pinv((H + λ .* (diag(H).* Ient))) * transpose(J) * F
         ϵ1 = norm(getsystem(nx, X-Xdiff, order))

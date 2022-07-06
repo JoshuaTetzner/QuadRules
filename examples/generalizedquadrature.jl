@@ -1,5 +1,6 @@
 using SpecialPolynomials
 using FastGaussQuadrature
+using QuadGK
 
 function logfct(n, x)
     if iseven(n)
@@ -14,11 +15,11 @@ function chebyshevpolynomials(n, x)
 end
 
 ##
-N = 5
+N = 10
 order = 2*N-1 
 println("nestedapprox")
-@time sys = nestedsystem(order, 2, 50, chebyshevpolynomials)
-@time sgsys = nestedsystem(order, 50, 50, logfct)
+@time sys = nestedsystem(order, 2, 30, chebyshevpolynomials, precision=1e-64)
+@time sgsys = nestedsystem(order, 50, 50, logfct, precision=1e-64)
 println("gramschmidt")
 osys = gramschmidt(sys)
 osgsys = gramschmidt(sgsys)
@@ -27,5 +28,12 @@ x, w = gausslegendre(N)
 #x = big.(x)
 x = x .* big(0.5) .+ 0.5
 #sys.segments
-@time x, w, e = nestedquadrature(osgsys, osys, x)
 
+@time x, w, e = nestedquadrature(osgsys, osys, x, tol=1e-64)
+
+##
+
+convert(Vector{Matrix{Float64}}, osys.systems[:])
+
+sys.intpl
+sgsys.intpl

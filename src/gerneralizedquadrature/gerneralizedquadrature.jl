@@ -1,28 +1,45 @@
 using LinearAlgebra
 
-function opf(sgsys, sys, x, n::Int, t)
-    return (1 - t) * sys.pl(sys.systems[n], sys.segments, x) + t * sgsys.pl(sgsys.systems[n], sgsys.segments, x)
+function opf(
+    sgsys::NestedSystem,
+    sys::NestedSystem,
+    x::T,
+    n::Int,
+    t
+) where {T <: AbstractFloat}
+    
+    return (1 - t) * sys.pl(sys.systems[n], sys.segments, x) + 
+        t * sgsys.pl(sgsys.systems[n], sgsys.segments, x)
 end
 
-function dopf(sgsys, sys, x, n::Int, t)
-    return (1 - t) * sys.dpl(sys.systems[n], sys.segments, x) + t * sgsys.dpl(sgsys.systems[n], sgsys.segments, x)
+function dopf(
+    sgsys::NestedSystem,
+    sys::NestedSystem,
+    x::T,
+    n::Int,
+    t
+) where {T <: AbstractFloat}
+
+    return (1 - t) * sys.dpl(sys.systems[n], sys.segments, x) + 
+        t * sgsys.dpl(sgsys.systems[n], sgsys.segments, x)
 end
 
-function intopf(sgsys, sys, n::Int, t)
+function intopf(sgsys::NestedSystem, sys::NestedSystem, n::Int, t)
     return (1 - t) * sys.intpl[n] + t * sgsys.intpl[n]
 end
 
 function getαβ(
-    sgsys,
-    sys,
-    x::Vector,
+    sgsys::NestedSystem,
+    sys::NestedSystem,
+    x::Vector{T},
     t
-)
+) where {T <: AbstractFloat}
+
     n = length(x)
     len = length(sys.systems)
-    α = zeros(BigFloat, n, 2*n)
-    β = zeros(BigFloat, n, 2*n)
-    ση = zeros(BigFloat, 2*n, 2*n)
+    α = zeros(T, n, 2*n)
+    β = zeros(T, n, 2*n)
+    ση = zeros(T, 2*n, 2*n)
         
     @threads for i = 1:n
         @threads for j = 1:len
@@ -32,10 +49,10 @@ function getαβ(
     end
 
     @threads for index = 1:n
-        fα = zeros(BigFloat, 2*n)
-        fα[n+index] = big(1.0)
-        fβ = zeros(BigFloat, 2*n)
-        fβ[index] = big(1.0)
+        fα = zeros(T, 2*n)
+        fα[n+index] = T(1.0)
+        fβ = zeros(T, 2*n)
+        fβ[index] = T(1.0)
         α[index, :] = ση \ fα
         β[index, :] = ση \ fβ
     end
@@ -44,16 +61,17 @@ function getαβ(
 end
 
 function intση(
-    sgsys,
-    sys,
-    α::Matrix,
-    β::Matrix,
+    sgsys::NestedSystem,
+    sys::NestedSystem,
+    α::Matrix{T},
+    β::Matrix{T},
     t
-)
+) where {T <: AbstractFloat}
+
     len = size(α)[1]
     lensys = length(sys.systems)
-    integralσ = zeros(BigFloat, len)
-    integralη = zeros(BigFloat, len)
+    integralσ = zeros(T, len)
+    integralη = zeros(T, len)
 
     for j = 1:lensys
         integral = intopf(sgsys, sys, j, t)
@@ -66,12 +84,30 @@ function intση(
     return integralσ, integralη
 end
 
-function nestedquadrature(sgsys::NestedSystem, sys::NestedSystem, x::Vector)
-    println(eltype(x))
+function nestedquadrature(
+    sgsys::NestedSystem,
+    sys::NestedSystem,
+    x::Vector{T};
+    tol=1e-16
+) where {T <: AbstractFloat}
+    toltype = Float64
+    if tol < eps(Float64)
+        println("Switched to BigFloat")
+        toltype = BigFloat
+    end
+    x = toltype.(x)
+    sgsys.systems = convert(Vector{Matrix{toltype}}, sgsys.systems)
+    sys.systems = convert(Vector{Matrix{toltype}}, sys.systems)
+    sgsys.segments = convert(Vector{toltype}, sgsys.segments)
+    sys.segments = convert(Vector{toltype}, sys.segments)
+    sgsys.intpl = convert(Vector{toltype}, sgsys.intpl)
+    sys.intpl = convert(Vector{toltype}, sys.intpl)
+
+
     t = 0.0
     α, β = getαβ(sgsys, sys, x, t)
     intσ, intη = intση(sgsys, sys, α, β, t)
-    #println(norm(intσ))
+
     println("Progress:")
     print(".")
     step = 0.01
@@ -84,7 +120,9 @@ function nestedquadrature(sgsys::NestedSystem, sys::NestedSystem, x::Vector)
         ϵ2 = 1
         mult = 1
         
-        while iter < 20 && !isapprox(0, ϵ, atol = 1e-32) && ϵ <= 10 && ϵ2 <= 10 && maximum(abs.(xnew)) < 1.0 #&& minimum(xnew) > 0.0
+        while iter < 20 && !isapprox(0, ϵ, atol = tol) && 
+            ϵ <= 10 && ϵ2 <= 10 && maximum(abs.(xnew)) < 1.0 
+
             iter+=1
             α, β = getαβ(sgsys, sys, xnew, t)
             intσ, intη = intση(sgsys, sys, α, β, t)
@@ -93,7 +131,8 @@ function nestedquadrature(sgsys::NestedSystem, sys::NestedSystem, x::Vector)
             ϵ2 = norm(intσ)
             xnew += diff 
         end
-        if isapprox(ϵ, 0, atol=1e-32)
+
+        if isapprox(ϵ, 0, atol=tol)
             x = xnew
             if t >= 1            
                 break
@@ -111,12 +150,13 @@ function nestedquadrature(sgsys::NestedSystem, sys::NestedSystem, x::Vector)
                 t += step
             end
         end
+        
         if t > 1
             step -= t-1
             t = 1 
         end
         println(ϵ)
-        #println(x)  
+        println(x)
         println(t)    
     end
 
