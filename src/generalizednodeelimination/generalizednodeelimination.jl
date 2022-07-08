@@ -12,8 +12,8 @@ function fmat(fct, x::Vector)
     return F
 end
 
-function getpolynomes(sysa, sysb)
-    p = length(sysa.intpl)-1
+function getpolynomes(sysa, sysb, order)
+    p = order#length(sysa.intpl)-1
     Φ=[]
     intf=[]
     for i = 0:p
@@ -30,8 +30,8 @@ function getpolynomes(sysa, sysb)
     return Φ, intf
 end
 
-function getpolynomes_dx(sysa, sysb)
-    p = length(sysa.intpl)-1
+function getpolynomes_dx(sysa, sysb, order)
+    p = order#length(sysa.intpl)-1
     Φ=[]
     for i = 0:p
         for j = 0:p-i
@@ -46,8 +46,8 @@ function getpolynomes_dx(sysa, sysb)
     return Φ
 end
 
-function getpolynomes_dy(sysa, sysb)
-    p = length(sysa.intpl)-1
+function getpolynomes_dy(sysa, sysb, order)
+    p = order#length(sysa.intpl)-1
     Φ=[]
     for i = 0:p
         for j = 0:p-i
@@ -85,17 +85,25 @@ function getA(x::Vector, Φ)
 end
 
 
-function nonsymmetricquad2(sysa, sysb,  xa::Vector{T}, xb::Vector{T}, wa::Vector{T}, wb::Vector{T}) where {T <: AbstractFloat}
+function nonsymmetricquad2(
+    sysa,
+    sysb, 
+    xa::Vector{T},
+    xb::Vector{T},
+    wa::Vector{T},
+    wb::Vector{T},
+    order
+) where {T <: AbstractFloat}
     if length(sysa.intpl) != length(sysb.intpl)
         return 0, 0
     else
-        Φ, int_f = getpolynomes(sysa, sysb)
-        dΦ_x = getpolynomes_dx(sysa, sysb)
-        dΦ_y = getpolynomes_dy(sysa, sysb)
+        Φ, int_f = getpolynomes(sysa, sysb, order)
+        dΦ_x = getpolynomes_dx(sysa, sysb, order)
+        dΦ_y = getpolynomes_dy(sysa, sysb, order)
 
         nodes, weights = tensorrule(xa, wa, xb, wb, 2)
         n = length(weights)
-        x = zeros(Float64, 3*length(weights))
+        x = zeros(T, 3*length(weights))
         for i = 1:length(weights)
             x[(i-1)*3+1] = nodes[i,1]
             x[(i-1)*3+2] = nodes[i,2]
@@ -103,6 +111,7 @@ function nonsymmetricquad2(sysa, sysb,  xa::Vector{T}, xb::Vector{T}, wa::Vector
         end
         println(norm(int_f - getA(x, Φ) * x[3:3:(3*n)])) 
         println(x)
+        
         for k = (n-1):-1:1        
             delnode = x[(3*k+1):(3*k+3)]
             pop!(x)
@@ -130,7 +139,7 @@ function nonsymmetricquad2(sysa, sysb,  xa::Vector{T}, xb::Vector{T}, wa::Vector
                     fct = fmat(Φ, x)
                     x -= pinv(J)*(fct-int_f)
                     
-                    if minimum(x) < 0 || maximum(x) > 1
+                    if minimum(x) < -1 || maximum(x) > 1
                         println("break")
                         break
                     end

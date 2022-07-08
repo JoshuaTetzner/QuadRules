@@ -24,7 +24,7 @@ function segments(n::Int)
     return s
 end
 
-function nestednodes(nsegments::Int, nnodes::Int, fct, T)
+function nestednodes(nsegments::Int, nnodes::Int, fct; T=BigFloat)
     function segments(n)
         s = zeros(n)
         s[1] = -1
@@ -65,7 +65,6 @@ function nestedsystem(order::Int, nsegments::Int, nnodes::Int, fct; T=BigFloat)
     @threads for nf = 0:order 
         f(x) = fct(nf, x)
         systems[nf+1], seg = nestednodes(nsegments, nnodes, f, T)
-        integrals[nf+1] = quadgk(x->f(x), T(-1), T(1), atol = 1e-20)[1]
     end
     function approxpl(segmentnodes, seg, x)
         nnodes = size(segmentnodes)[1]
