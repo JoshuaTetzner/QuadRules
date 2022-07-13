@@ -13,7 +13,7 @@ function fmat(fct, x::Vector)
 end
 
 function getpolynomes(sysa, sysb, order)
-    p = order#length(sysa.intpl)-1
+    p = order
     Φ=[]
     intf=[]
     for i = 0:p
@@ -31,7 +31,7 @@ function getpolynomes(sysa, sysb, order)
 end
 
 function getpolynomes_dx(sysa, sysb, order)
-    p = order#length(sysa.intpl)-1
+    p = order
     Φ=[]
     for i = 0:p
         for j = 0:p-i
@@ -47,7 +47,7 @@ function getpolynomes_dx(sysa, sysb, order)
 end
 
 function getpolynomes_dy(sysa, sysb, order)
-    p = order#length(sysa.intpl)-1
+    p = order
     Φ=[]
     for i = 0:p
         for j = 0:p-i
@@ -83,7 +83,6 @@ function getA(x::Vector, Φ)
     end
     return A
 end
-
 
 function nonsymmetricquad2(
     sysa,

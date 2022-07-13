@@ -26,11 +26,11 @@ end
 
 function nestednodes(nsegments::Int, nnodes::Int, fct; T=BigFloat)
     function segments(n)
-        s = zeros(n)
+        s = zeros(BigFloat, n)
         s[1] = -1
         s[n] = 1
         for i = 2:n-1
-            s[i] = s[1] + 3/2^(n-i)
+            s[i] = s[1] + 3/big(2)^(n-i)
         end
         return s
     end
@@ -52,7 +52,6 @@ function nestednodes(nsegments::Int, nnodes::Int, fct; T=BigFloat)
             ])
         end
     end
-
     return segmentnodes, s
 end
 
@@ -64,7 +63,7 @@ function nestedsystem(order::Int, nsegments::Int, nnodes::Int, fct; T=BigFloat)
 
     @threads for nf = 0:order 
         f(x) = fct(nf, x)
-        systems[nf+1], seg = nestednodes(nsegments, nnodes, f, T)
+        systems[nf+1], seg = nestednodes(nsegments, nnodes, f, T=T)
     end
     function approxpl(segmentnodes, seg, x)
         nnodes = size(segmentnodes)[1]

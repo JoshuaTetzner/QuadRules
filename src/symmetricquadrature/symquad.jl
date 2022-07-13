@@ -155,7 +155,7 @@ function jacobian(nx, X::Vector{T}, order) where {T <: AbstractFloat}
     return J
 end
 
-function expand(X::Vector{T}, nx) where {T <: AbstractFloat}
+function expand(X::Vector{T}, nx::Vector{Vector}) where {T <: AbstractFloat}
     nodes = []
     weights = []
     xind = 0
@@ -210,7 +210,7 @@ function expand(X::Vector{T}, nx) where {T <: AbstractFloat}
 end
 
 function symquadratur(
-    nx,
+    nx::Vector{Vector},
     X::Vector{T},
     order;
     iterations=1000,
@@ -244,3 +244,4 @@ function symquadratur(
     nodes, weights = expand(X, nx)
     return X, nodes, weights
 end
+
