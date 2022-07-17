@@ -12,51 +12,88 @@ function fmat(fct, x::Vector)
     return F
 end
 
-function getpolynomes(sysa, sysb, order)
-    p = order
+function getpolynomes(sysa, sysb, order1, order2)
     Φ=[]
     intf=[]
-    for i = 0:p
-        for j = 0:p-i
-            ϕ(x,y) = sysa.pl(
-                sysa.systems[i+1], 
-                sysa.segments, 
-                big.(x)
-            ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
-            push!(Φ, ϕ)
-            push!(intf, sysa.intpl[i+1]*sysb.intpl[j+1])    
+    if order1 < order2
+        for i = 0:order1
+            for j = 0:order2-i
+                ϕ(x,y) = sysa.pl(
+                    sysa.systems[i+1], 
+                    sysa.segments, 
+                    big.(x)
+                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
+                push!(Φ, ϕ)
+                push!(intf, sysa.intpl[i+1]*sysb.intpl[j+1])    
+            end
+        end
+    else
+        for j = 0:order2
+            for i = 0:order1-j
+                ϕ(x,y) = sysa.pl(
+                    sysa.systems[i+1], 
+                    sysa.segments, 
+                    big.(x)
+                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
+                push!(Φ, ϕ)
+                push!(intf, sysa.intpl[i+1]*sysb.intpl[j+1])    
+            end
         end
     end
     return Φ, intf
 end
 
-function getpolynomes_dx(sysa, sysb, order)
-    p = order
+function getpolynomes_dx(sysa, sysb, order1, order2)
     Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            ϕ(x,y) = sysa.dpl(
-                sysa.systems[i+1], 
-                sysa.segments, 
-                big.(x)
-            ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
-            push!(Φ, ϕ)    
+    if order1 < order2
+        for i = 0:order1
+            for j = 0:order2-i
+                ϕ(x,y) = sysa.dpl(
+                    sysa.systems[i+1], 
+                    sysa.segments, 
+                    big.(x)
+                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
+                push!(Φ, ϕ)    
+            end
+        end
+    else
+        for j = 0:order2
+            for i = 0:order1-j
+                ϕ(x,y) = sysa.dpl(
+                    sysa.systems[i+1], 
+                    sysa.segments, 
+                    big.(x)
+                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
+                push!(Φ, ϕ)    
+            end
         end
     end
     return Φ
 end
 
-function getpolynomes_dy(sysa, sysb, order)
-    p = order
+function getpolynomes_dy(sysa, sysb, order1, order2)
     Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            ϕ(x,y) = sysa.pl(
-                sysa.systems[i+1], 
-                sysa.segments, 
-                big(x)
-            ) * sysb.dpl(sysb.systems[j+1], sysb.segments, big(y))
-            push!(Φ, ϕ)    
+    if order1 < order2
+        for i = 0:order1
+            for j = 0:order2-i
+                ϕ(x,y) = sysa.pl(
+                    sysa.systems[i+1], 
+                    sysa.segments, 
+                    big(x)
+                ) * sysb.dpl(sysb.systems[j+1], sysb.segments, big(y))
+                push!(Φ, ϕ)    
+            end
+        end
+    else
+        for j = 0:order2
+            for i = 0:order1-j
+                ϕ(x,y) = sysa.pl(
+                    sysa.systems[i+1], 
+                    sysa.segments, 
+                    big(x)
+                ) * sysb.dpl(sysb.systems[j+1], sysb.segments, big(y))
+                push!(Φ, ϕ)    
+            end
         end
     end
     return Φ
@@ -91,14 +128,17 @@ function nonsymmetricquad2(
     xb::Vector{T},
     wa::Vector{T},
     wb::Vector{T},
-    order
+    order1,
+    order2
 ) where {T <: AbstractFloat}
-    if length(sysa.intpl) != length(sysb.intpl)
+    if false#length(sysa.intpl) != length(sysb.intpl)
         return 0, 0
     else
-        Φ, int_f = getpolynomes(sysa, sysb, order)
-        dΦ_x = getpolynomes_dx(sysa, sysb, order)
-        dΦ_y = getpolynomes_dy(sysa, sysb, order)
+        println(order1)
+        println(order2)
+        Φ, int_f = getpolynomes(sysa, sysb, order1, order2)
+        dΦ_x = getpolynomes_dx(sysa, sysb, order1, order2)
+        dΦ_y = getpolynomes_dy(sysa, sysb, order1, order2)
 
         nodes, weights = tensorrule(xa, wa, xb, wb, 2)
         n = length(weights)
@@ -119,29 +159,38 @@ function nonsymmetricquad2(
             savex = x
             currentindex = k
             println(k)
-            println(norm(int_f - getA(x, Φ) * x[3:3:(3*k)])) 
-            #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j = 1:length(Φ)])*x[3*i+3] for i = 0:(k-1)]
+            #println(norm(int_f - getA(x, Φ) * x[3:3:(3*k)])) 
+            sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j = 1:length(Φ)])*x[3*i+3] for i = 0:(k-1)]
             counter = 1
-            while currentindex >= 1#counter <= k
-                #counter += 1
-                currentindex -= 1
-                #currentindex = argmin(sindex)-1
-                #sindex[currentindex+1] = maximum(sindex)+1
+            while counter <= k#currentindex >= 1#
+                counter += 1
+                #currentindex -= 1
+                currentindex = argmin(sindex)-1
+                sindex[currentindex+1] = maximum(sindex)+1
 
                 iter = 0
                 ϵ=1
                 print("cindex: ")
                 println(currentindex+1)
-                while iter < 15 && !isapprox(ϵ, 0, atol=1e-14) && ϵ < 5
+                while iter < 15 && !isapprox(ϵ, 0, atol=1e-14) && ϵ < 100
                     iter += 1
                     J = jacobian(dΦ_x, dΦ_y, Φ, x) 
                     fct = fmat(Φ, x)
-                    x -= pinv(J)*(fct-int_f)
-                    
-                    if minimum(x) < -1 || maximum(x) > 1
-                        println("break")
-                        break
+                    x -= pinv(Float64.(J))*(fct-int_f)
+                    #println(x)
+                    for i = 1:3:3*k
+                        if abs(x[i]) > 1
+                            println("out")
+                            x[i] = sign(x[i])*1
+                        end
                     end
+                    for i = 2:3:3*k
+                        if abs(x[i]) > 1
+                            println("out")
+                            x[i] = sign(x[i])*1
+                        end
+                    end
+                    #println(x)
                     ϵ = norm(int_f - getA(x, Φ) * x[3:3:(3*k)]) 
                     println(ϵ)
                 end
@@ -161,3 +210,4 @@ function nonsymmetricquad2(
         end
     end
 end
+
