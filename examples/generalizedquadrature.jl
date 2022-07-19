@@ -14,11 +14,11 @@ function chebyshevpolynomials(n, x)
 end
 
 #
-N = 3
+N = 5
 order = 2*N-1 
 println("nestedapprox")
 @time sys = nestedsystem(order, 2, 50, chebyshevpolynomials, T=BigFloat)
-@time sgsys = nestedsystem(order, 70, 70, logfct, T = BigFloat)
+@time sgsys = nestedsystem(order, 50, 50, logfct, T = BigFloat)
 println("gramschmidt")
 osys = gramschmidt(sys)
 osgsys = gramschmidt(sgsys)
@@ -28,7 +28,7 @@ x = big.(x)
 @time x, w, e = nestedquadrature(osgsys, sys, x, tol=1e-64)
 #osys.intpl
 ##
-
+w.*0.5
 ##
 function logfct(n, x)
     if iseven(n)

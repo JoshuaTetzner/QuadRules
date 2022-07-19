@@ -36,3 +36,10 @@ for i = 2:length(seg)
     println(seg[i-1]-seg[i])
 end
 ##
+function logfct(n, x)
+    if iseven(n)
+        return x^Int(n/2)
+    else
+        return x^Int(floor(n/2))*log(x+1) 
+    end
+end
