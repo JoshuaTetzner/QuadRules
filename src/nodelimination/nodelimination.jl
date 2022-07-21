@@ -101,8 +101,17 @@ function nonsymmetricquad(
         savex = x
         currentindex = k
         
-        while currentindex != 1
-            currentindex -= 1
+        sindex = [i for i = k:-1:1]#[sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j = 1:length(Φ)]) for i = 0:(k-1)] #
+        counter = 1
+        while counter <= k#currentindex >= 1#
+            counter += 1
+            #currentindex -= 1
+            currentindex = argmin(sindex)-1
+            sindex[currentindex+1] = maximum(sindex)+1
+        #while currentindex != 1
+        #    currentindex -= 1
+            
+            
             iter = 0
             ϵ=1
             while iter < 10 && !isapprox(ϵ, 0, atol=1e-14)

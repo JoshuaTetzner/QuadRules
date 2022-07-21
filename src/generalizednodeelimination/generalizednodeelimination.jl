@@ -160,7 +160,7 @@ function nonsymmetricquad2(
             currentindex = k
             println(k)
             #println(norm(int_f - getA(x, Φ) * x[3:3:(3*k)])) 
-            sindex = [i for i = 1:k]#[sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j = 1:length(Φ)])*x[3*i+3] for i = 0:(k-1)]
+            sindex = [i for i = k:-1:1]#[sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j = 1:length(Φ)]) for i = 0:(k-1)]#
             counter = 1
             while counter <= k#currentindex >= 1#
                 counter += 1
@@ -172,7 +172,7 @@ function nonsymmetricquad2(
                 ϵ=1
                 print("cindex: ")
                 println(currentindex+1)
-                while iter < 25 && !isapprox(ϵ, 0, atol=1e-14) && ϵ < 100
+                while iter < 25 && !isapprox(ϵ, 0, atol=1e-14) && ϵ < 50
                     iter += 1
                     J = jacobian(dΦ_x, dΦ_y, Φ, x) 
                     fct = fmat(Φ, x)

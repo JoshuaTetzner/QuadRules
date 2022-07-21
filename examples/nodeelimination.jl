@@ -3,11 +3,12 @@ using JLD2
 using FastGaussQuadrature
 
 ## Single cubature for a complete polynomial system up to given order.
-order = 2
-points = Int(ceil((order+1)/2))
-xa, wa = gausslegendre(points) 
+n = 7
+order = 2*n-1 
+xa, wa = gausslegendre(n) 
 nodes, weights = tensorrule(xa, wa, xa, wa, 2)
 nodes, weights = nonsymmetricquad(nodes, weights, order)
+println(length(weights))
 
 ## Multible cubatures for complete polynomials from order "a" upto order "b"
 function start(a::Int, b::Int)
