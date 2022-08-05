@@ -13,3 +13,14 @@ for i = 1:length(cplw)
     end
 end
 
+##
+for i in eachindex(logquadx)
+    print(length(logquadx[i]))
+    for j in eachindex(logquadx[i])
+        print("&")
+        print(Float64(logquadx[i][j]))
+        print("&")
+        print(Float64(logquadw[i][j]))
+        println("\\\\")
+    end
+end

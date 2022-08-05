@@ -15,9 +15,19 @@ for nxvec in nxvecs
     X, nodes, weights = symquadratur(nxvec[:], X, order)
     println(nodes)
     println(weights)
+    fail = false
+    for node in nodes
+        if abs(node[1]) > 1 || abs(node[2]) > 1
+            fail = true 
+        end      
+    end
+    if fail
+        print("fail\t")
+    end
     #Check cubature for f(x,y) = x^2 y^2. True value = 0.4444444444444444. 
     f(x,y) = x^2*y^2
     println(sum([f(nodes[j][1],nodes[j][2])*weights[j] for j = 1:length(weights)]))
+
 end
 
 ## Mulitble symmetric cubature rules for complete sets of polynomials up to maxorder. 
@@ -27,32 +37,43 @@ function symmetricparallel(maxorder::Int)
     f(x,y) = x^2*y^2
     found = zeros(Bool, maxorder)
     npoints = zeros(maxorder)
-    for order = 3:2:maxorder
+    for order = 21:2:maxorder
         println(order)
         add = 0
         while add <= 2 && !found[order]
             nxvec = getcombinations(order, add)
-            for i = 1:length(nxvec)
+            for i in eachindex(nxvec)
                 println(nxvec[i])
                 count = 0
-                while count < 20
+                while count < 50
                     count += 1
                     n = nxvec[i][1] + 2*(nxvec[i][2] + nxvec[i][3]) + 3*nxvec[i][4] 
                     X = rand(Float64, n)
                     X, nodes, weights = symquadratur(nxvec[i][:], X, order, iterations=200)
-                    intval = sum([f(nodes[i][1],nodes[i][2])*weights[i] for i = 1:length(weights)])
-                    if norm(getsystem(nxvec[i][:], X, order)) < 1e-14 && 
+                    intval = sum([f(nodes[i][1],nodes[i][2])*weights[i] for i in eachindex(weights)])
+                    fail = false
+                    if norm(getsystem(nxvec[i][:], X, order)) < 1e-12 && 
                         isapprox(intval, 0.44444444444444, atol=1e-10)
-                        if !found[order]
-                            found[order] = true
-                            npoints[order] = length(weights)
-                            dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
-                            save("symquad" * string(order)  * ".jld2", dict)
-                        else
-                            if length(weights) < npoints[order]
+                        for node in nodes
+                            if abs(node[1]) > 1 || abs(node[2]) > 1
+                            end      
+                        end
+                        if !fail
+                            if !found[order]
+                                found[order] = true
                                 npoints[order] = length(weights)
                                 dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
                                 save("symquad" * string(order)  * ".jld2", dict)
+                                print("weights: ")
+                                println(length(weights))
+                            else
+                                if length(weights) < npoints[order]
+                                    npoints[order] = length(weights)
+                                    print("weights: ")
+                                    println(length(weights))
+                                    dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
+                                    save("symquad" * string(order)  * ".jld2", dict)
+                                end
                             end
                         end
                     end

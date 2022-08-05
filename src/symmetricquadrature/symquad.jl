@@ -70,7 +70,7 @@ function getcombinations(p, add)
         else
             #lower
             num = Int(ceil(num/2))
-            n3diff = (num-1)^2+(num-1) +num
+            n3diff = (num-1)^2+(num-1) + num
         end
         println(n3diff)
         n3 = Int(ceil(n3diff/3))
@@ -155,7 +155,7 @@ function jacobian(nx, X::Vector{T}, order) where {T <: AbstractFloat}
     return J
 end
 
-function expand(X::Vector{T}, nx::Vector{Vector}) where {T <: AbstractFloat}
+function expand(X::Vector{T}, nx::Vector) where {T <: AbstractFloat}
     nodes = []
     weights = []
     xind = 0
@@ -210,7 +210,7 @@ function expand(X::Vector{T}, nx::Vector{Vector}) where {T <: AbstractFloat}
 end
 
 function symquadratur(
-    nx::Vector{Vector},
+    nx::Vector,
     X::Vector{T},
     order;
     iterations=1000,

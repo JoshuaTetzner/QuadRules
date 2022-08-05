@@ -15,8 +15,8 @@ end
 
 N1 = 6
 order1 = 2*N1-1 
-@time sysa = nestedsystem(order1, 50, 50, logfct)
-N2 = 4
+@time sysa = nestedsystem(order1, 50, 30, logfct)
+N2 = 3
 order2 = 2*N2-1 
 @time sysb = nestedsystem(order2, 2, 22, chebyshevpolynomials)
 
@@ -28,21 +28,27 @@ wa = Float64.(logquadw[N1-2].*2)
 #xa, wa = gausslegendre(N1)
 xb, wb = gausslegendre(N2) 
 
-x, w = nonsymmetricquad2(sysa, sysb, xa, xb, wa, wb, order1-1, order2-1)
+x, w = nonsymmetricquad2(sysa, sysb, xa, xb, wa, wb, order1, order2)
 
 println(x)
 println(length(w))
+##
+getpolynomes(sysa, sysb, order1, order2)
+i=1
 ##
 function chebyshevpolynomials(n, x)
     return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-n = 6
+n = 7
 order = 2*n-1 
 @time sys = nestedsystem(order, 2, 30, chebyshevpolynomials)
 
 sys = gramschmidt(sys)
 xa, wa = gausslegendre(n)
 
-x, w = nonsymmetricquad2(sys, sys, xa, xa, wa, wa, order, order)
-printnln(length(weights))
+x, w = nonsymmetricquad2(sys, sys, xa, xa, wa, wa, order-1, order-1)
+println(length(w))#
+
+##
+gausslegendre(5)

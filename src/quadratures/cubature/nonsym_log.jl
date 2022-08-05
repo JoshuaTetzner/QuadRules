@@ -311,5 +311,5 @@ c11logw = [
     0.09145642213677703
 ]
 
-clogx = [c4logx, c5logx, c6logx, c7logx, c8logx, c9logx, c10logx, c11logx]#, c12logx]
-clogw = [c4logw, c5logw, c6logw, c7logw, c8logw, c9logw, c10logw, c11logw]#, c12logw]
+clogx = [c4logx, c5logx, c6logx, c7logx, c8logx, c9logx, c10logx, c11logx]
+clogw = [c4logw, c5logw, c6logw, c7logw, c8logw, c9logw, c10logw, c11logw]

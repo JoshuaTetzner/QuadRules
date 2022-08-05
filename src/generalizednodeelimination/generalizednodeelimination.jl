@@ -17,7 +17,7 @@ function getpolynomes(sysa, sysb, order1, order2)
     intf=[]
     if order1 < order2
         for i = 0:order1
-            for j = 0:order2-i
+            for j = 0:(order2-2*i)
                 ϕ(x,y) = sysa.pl(
                     sysa.systems[i+1], 
                     sysa.segments, 
@@ -29,7 +29,7 @@ function getpolynomes(sysa, sysb, order1, order2)
         end
     else
         for j = 0:order2
-            for i = 0:order1-j
+            for i = 0:(order1-2*j)
                 ϕ(x,y) = sysa.pl(
                     sysa.systems[i+1], 
                     sysa.segments, 
@@ -47,7 +47,7 @@ function getpolynomes_dx(sysa, sysb, order1, order2)
     Φ=[]
     if order1 < order2
         for i = 0:order1
-            for j = 0:order2-i
+            for j = 0:(order2-2*i)
                 ϕ(x,y) = sysa.dpl(
                     sysa.systems[i+1], 
                     sysa.segments, 
@@ -58,7 +58,7 @@ function getpolynomes_dx(sysa, sysb, order1, order2)
         end
     else
         for j = 0:order2
-            for i = 0:order1-j
+            for i = 0:(order1-2*j)
                 ϕ(x,y) = sysa.dpl(
                     sysa.systems[i+1], 
                     sysa.segments, 
@@ -75,7 +75,7 @@ function getpolynomes_dy(sysa, sysb, order1, order2)
     Φ=[]
     if order1 < order2
         for i = 0:order1
-            for j = 0:order2-i
+            for j = 0:(order2-2*i)
                 ϕ(x,y) = sysa.pl(
                     sysa.systems[i+1], 
                     sysa.segments, 
@@ -86,7 +86,7 @@ function getpolynomes_dy(sysa, sysb, order1, order2)
         end
     else
         for j = 0:order2
-            for i = 0:order1-j
+            for i = 0:(order1-2*j)
                 ϕ(x,y) = sysa.pl(
                     sysa.systems[i+1], 
                     sysa.segments, 
