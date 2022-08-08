@@ -9,11 +9,6 @@ mutable struct NestedSystem{T <: AbstractFloat}
     intpl::Vector{T}
 end
 
-#function NestedSystem(system, segments, pl, dpl, intpl)
-#    return NestedSystem(system, segments, pl, dpl, intpl)
-#end
-
-
 function segments(n::Int)
     s = zeros(Float64, n)
     s[1] = 0
@@ -45,7 +40,7 @@ function nestednodes(nsegments::Int, nnodes::Int, fct; T=BigFloat)
             1/2 * T(s[nc+1] - s[nc]) * cos(pi * T(k - 1 / 2) / T(nnodes))
             for k = 1:nnodes
         ]
-        for (nn, node) in enumerate(col)
+        for nn in eachindex(col)
             segmentnodes[nn, nc] = sum([
                 (2-δ(nn-1)) / T(nnodes) * fct(xn[i]) * schebychev(nn-1, xn[i], s[nc], s[nc+1]) 
                 for i = 1:nnodes

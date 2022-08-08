@@ -13,12 +13,12 @@ function chebyshevpolynomials(n, x)
     return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-N1 = 6
+N1 = 10
 order1 = 2*N1-1 
-@time sysa = nestedsystem(order1, 50, 30, logfct)
-N2 = 3
+@time sysa = nestedsystem(order1, 50, 50, logfct)
+N2 = 5
 order2 = 2*N2-1 
-@time sysb = nestedsystem(order2, 2, 22, chebyshevpolynomials)
+@time sysb = nestedsystem(order2, 2, 30, chebyshevpolynomials)
 
 sysa = gramschmidt(sysa)
 sysb = gramschmidt(sysb)
@@ -30,8 +30,8 @@ xb, wb = gausslegendre(N2)
 
 x, w = nonsymmetricquad2(sysa, sysb, xa, xb, wa, wb, order1, order2)
 
-println(x)
-println(length(w))
+println(Float64.(x))
+println(Float64.(w))
 ##
 getpolynomes(sysa, sysb, order1, order2)
 i=1

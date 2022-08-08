@@ -2,9 +2,10 @@ using FileIO
 using JLD2
 using Base.Threads
 
-## Singel symmetric cubature rule for a complete set of polynomials with given order. 
-# Symmetric Cubatures are not always found for random start values. 
-# Function might have to be called more than once.
+## 
+# singel symmetric cubature rule for a complete set of polynomials with given order. 
+# Symmetric cubatures are not always found for random start values. 
+# function might have to be called more than once.
 order = 4
 nxvecs = getcombinations(order, 0)
 
@@ -15,24 +16,13 @@ for nxvec in nxvecs
     X, nodes, weights = symquadratur(nxvec[:], X, order)
     println(nodes)
     println(weights)
-    fail = false
-    for node in nodes
-        if abs(node[1]) > 1 || abs(node[2]) > 1
-            fail = true 
-        end      
-    end
-    if fail
-        print("fail\t")
-    end
     #Check cubature for f(x,y) = x^2 y^2. True value = 0.4444444444444444. 
     f(x,y) = x^2*y^2
-    println(sum([f(nodes[j][1],nodes[j][2])*weights[j] for j = 1:length(weights)]))
-
+    println(sum([f(nodes[j][1],nodes[j][2])*weights[j] for j in eachindex(weights)]))
 end
 
-## Mulitble symmetric cubature rules for complete sets of polynomials up to maxorder. 
-# Funciton is called multibel times until cubature is found. 
-# Function stops solving combinations of n_0,...,n_3, if cubature is found. 
+## 
+# reconsruction of symmetric cubature rules for complete sets of polynomials up to maxorder. 
 function symmetricparallel(maxorder::Int)
     f(x,y) = x^2*y^2
     found = zeros(Bool, maxorder)
@@ -56,13 +46,18 @@ function symmetricparallel(maxorder::Int)
                         isapprox(intval, 0.44444444444444, atol=1e-10)
                         for node in nodes
                             if abs(node[1]) > 1 || abs(node[2]) > 1
+                                fail = true
                             end      
                         end
                         if !fail
                             if !found[order]
                                 found[order] = true
                                 npoints[order] = length(weights)
-                                dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
+                                dict = Dict{String, Any}(
+                                    string(order) => Dict(
+                                        "weights" => weights, "nodes" => nodes
+                                        )
+                                    )
                                 save("symquad" * string(order)  * ".jld2", dict)
                                 print("weights: ")
                                 println(length(weights))
@@ -71,7 +66,11 @@ function symmetricparallel(maxorder::Int)
                                     npoints[order] = length(weights)
                                     print("weights: ")
                                     println(length(weights))
-                                    dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
+                                    dict = Dict{String, Any}(
+                                        string(order) => Dict(
+                                            "weights" => weights, "nodes" => nodes
+                                        )
+                                    )
                                     save("symquad" * string(order)  * ".jld2", dict)
                                 end
                             end

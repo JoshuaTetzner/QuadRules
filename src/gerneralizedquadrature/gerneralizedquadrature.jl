@@ -66,7 +66,7 @@ function intση(
     α::Matrix{T},
     β::Matrix{T},
     t
-) where {T<:AbstractFloat}
+) where {T <: AbstractFloat}
   
     len = size(α)[1]
     lensys = length(sys.systems)

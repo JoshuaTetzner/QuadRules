@@ -58,8 +58,8 @@ w = [
 
 for i = 0:5
     print(Float64(sum([wh[j] * logfct(i, xh[j]) for j = 1:5]) - trueint[i+1]))
-    print("\t")#
+    print("\t")
     print(Float64(sum([ww[j] * logfct(i, xw[j]) for j = 1:5]) - trueint[i+1]))
-    print("\t")#
+    print("\t")
     println(Float64(sum([w[j] * logfct(i, x[j]) for j = 1:5]) - trueint[i+1]))
 end

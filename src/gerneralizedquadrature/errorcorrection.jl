@@ -132,7 +132,6 @@ function correctlog(x::Vector{BigFloat})
         return integralσ, integralη
     end
 
-
     ints = []
     for i = 0:(2*length(x)-1)
         push!(ints, intlogfct(i, big(1))-intlogfct(i,big(0)))

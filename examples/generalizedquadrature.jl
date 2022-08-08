@@ -1,6 +1,8 @@
 using SpecialPolynomials
 using FastGaussQuadrature
 
+##
+# generalized quadrature log(x+1) order N = 5
 function logfct(n, x)
     if iseven(n)
         return basis.(SpecialPolynomials.Chebyshev, Int(n/2))(x)
@@ -10,40 +12,37 @@ function logfct(n, x)
 end
 
 function chebyshevpolynomials(n, x)
-    return basis.(SpecialPolynomials.Chebyshev, n)(x)#x^n#
+    return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-#
 N = 5
 order = 2*N-1 
 println("nestedapprox")
-@time sys = nestedsystem(order, 2, 50, chebyshevpolynomials, T=BigFloat)
-@time sgsys = nestedsystem(order, 50, 50, logfct, T = BigFloat)
+sys = nestedsystem(order, 2, 50, chebyshevpolynomials, T=BigFloat)
+sgsys = nestedsystem(order, 50, 50, logfct, T = BigFloat)
 println("gramschmidt")
-osys = gramschmidt(sys)
-osgsys = gramschmidt(sgsys)
+sys = gramschmidt(sys)
+sgsys = gramschmidt(sgsys)
 println("quadrature")
 x, w = gausslegendre(N) 
-x = big.(x)
-@time x, w, e = nestedquadrature(osgsys, sys, x, tol=1e-64)
-#osys.intpl
+x, w, e = nestedquadrature(sgsys, sys, big.(x), tol=1e-64)
+
 ##
-w.*0.5
-##
+# generalized quadrature with second continuation
+
 function logfct(n, x)
     if iseven(n)
         return basis.(SpecialPolynomials.Chebyshev, Int(n/2))(x)
     else
-        return basis.(SpecialPolynomials.Chebyshev, Int(floor(n/2)))(x)*log(x+2) 
+        return basis.(SpecialPolynomials.Chebyshev, Int(floor(n/2)))(x)*log(x+4) 
     end
 end
 
 function chebyshevpolynomials(n, x)
-    return basis.(SpecialPolynomials.Chebyshev, n)(x)#x^n#
+    return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-#
-N = 8
+N = 15
 order = 2*N-1 
 println("nestedapprox")
 @time sys = nestedsystem(order, 2, 50, chebyshevpolynomials)
@@ -56,7 +55,7 @@ x, w = gausslegendre(N)
 x = big.(x)
 @time x, w, e = nestedquadrature(osgsys, sys, x)
 step = 1
-c1 = 2
+c1 = 4
 c2 = c1-step
 while c2 >= 1
     print("C1: ")
@@ -94,7 +93,6 @@ while c2 >= 1
         if step < 0.5
             step .* 2
         end
-        #step *= 2
         if (c2 + step) < 1
             c2 = 1
         else
@@ -108,11 +106,7 @@ while c2 >= 1
 end
 
 ##
-0.5 .*x .+ 0.5
-w./2
-
-
-##
+# correction function for generalized quadrature
 for i=3:10
     x, w = correctlog(logquadx[i-2])
     println(x)

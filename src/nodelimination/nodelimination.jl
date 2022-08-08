@@ -1,8 +1,9 @@
 using LinearAlgebra
+using Base.Threads
 
 function fmat(fct, x::Vector{T}) where {T <: AbstractFloat}
     F = zeros(T, length(fct))
-    for i = 1:length(fct)
+    for i in eachindex(fct)
         for j = 1:3:length(x)
             F[i] += fct[i](x[j], x[j+1])*x[j+2]
         end
@@ -48,8 +49,8 @@ end
 
 function jacobian(fdx, fdy, fdw, x::Vector{T}) where {T <: AbstractFloat}
     J = zeros(T, length(fdx), length(x))
-    for i = 1:length(fdx)
-        for j = 1:3:length(x)
+    @threads for i in eachindex(fdx)
+        @threads for j = 1:3:length(x)
             J[i, j] = fdx[i](x[j], x[j+1]) * x[j+2]
             J[i, j+1] = fdy[i](x[j], x[j+1]) * x[j+2]
             J[i, j+2] = fdw[i](x[j], x[j+1])
@@ -60,14 +61,13 @@ end
 
 function getA(x::Vector{T}, Φ) where {T <: AbstractFloat}
     A = zeros(T, length(Φ), Int(length(x)/3))
-    for j = 1:Int(length(x)/3)
-        for i = 1:length(Φ)
+    @hreads for j = 1:Int(length(x)/3)
+        @threads for i in eachindex(Φ)
             A[i, j] = Φ[i](x[(j-1)*3+1], x[(j-1)*3+2])
         end
     end
     return A
 end
-
 
 function nonsymmetricquad(
     nodes::Matrix{T},
@@ -99,19 +99,19 @@ function nonsymmetricquad(
         pop!(x)
         pop!(x)
         savex = x
-        currentindex = k
         
-        sindex = [i for i = k:-1:1]#[sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j = 1:length(Φ)]) for i = 0:(k-1)] #
+        # descending order
+        sindex = [i for i = k:-1:1]
+        # sum(phi(x))
+        #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) for i = 0:(k-1)] 
+        # sum(phi(x)) * w
+        #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) * x[3*i+3] for i = 0:(k-1)] 
+
         counter = 1
-        while counter <= k#currentindex >= 1#
+        while counter <= k
             counter += 1
-            #currentindex -= 1
             currentindex = argmin(sindex)-1
             sindex[currentindex+1] = maximum(sindex)+1
-        #while currentindex != 1
-        #    currentindex -= 1
-            
-            
             iter = 0
             ϵ=1
             while iter < 10 && !isapprox(ϵ, 0, atol=1e-14)
