@@ -7,7 +7,12 @@ using FastGaussQuadrature
 x_val = 1
 y_val = 1
 
-f(x, y) = x^2*y^2*log(abs(x+1))
+f(x, y) = x^10*y^10
+#f(x, y) = x^10*y^10 + x^20 + y^20
+#f(x, y) = x^55*y^55
+#f(x, y) = sin(x)^2 + sin(y)^2
+#f(x, y) = x^2*y^2*log(abs(x+2))
+#f(x, y) = x^2*y^2*log(abs(x+1))
 
 #Tensorrule
 tenquadval = []
@@ -60,20 +65,27 @@ for i = 1:length(csplw)
     push!(nsym, length(csplw[i]))
 end
 
-trueval = 4/27*(log(8)-4)#eps(Float64)
+trueval = 4/121
+#trueval = 1052/2541
+#trueval = 0
+#trueval = 4-2*sin(2)
+#trueval = log(9) - 52/27
+#trueval = 4/27*(log(8)-4)
 
 ##
 
 #Plots 
-tenval = abs.((tenquadval .- trueval)) .+ eps(Float64)
-dunavantval = abs.((dunavantquadval .- trueval)) .+ eps(Float64)
-nonsymval = abs.((nonsymquadval .- trueval)) .+ eps(Float64)
-symval = abs.((symquadval .- trueval)) .+ eps(Float64)
-
-println(tenval)
-println(dunavantquadval)
-println(nonsymval)
-println(symval)
+if trueval != 0
+    tenval = abs.((tenquadval .- trueval)) / trueval .+ eps(Float64)
+    dunavantval = abs.((dunavantquadval .- trueval)) / trueval .+ eps(Float64)
+    nonsymval = abs.((nonsymquadval .- trueval)) / trueval .+ eps(Float64)
+    symval = abs.((symquadval .- trueval)) / trueval .+ eps(Float64)
+else
+    tenval = abs.((tenquadval .- trueval)) .+ eps(Float64)
+    dunavantval = abs.((dunavantquadval .- trueval)) .+ eps(Float64)
+    nonsymval = abs.((nonsymquadval .- trueval)) .+ eps(Float64)
+    symval = abs.((symquadval .- trueval)) .+ eps(Float64)
+end
 
 tenval = 10 .* log10.(abs.(tenval))
 dunavantval = 10 .* log10.(abs.(dunavantval))

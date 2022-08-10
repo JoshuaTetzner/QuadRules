@@ -85,5 +85,15 @@ function nestedsystem(order::Int, nsegments::Int, nnodes::Int, fct; T=BigFloat)
         end
     end
 
+    for (i, eachsys) in  enumerate(systems)
+        for (ns, ecol) in enumerate(eachcol(eachsys))
+            integrals[i] += sum([
+                coeff * 
+                intschebychev(nc-1, seg[ns], seg[ns+1]) 
+                for (nc, coeff) in enumerate(ecol)
+            ]) 
+        end
+    end
+
     return NestedSystem(systems, seg, approxpl, approxdpl, integrals)
 end
