@@ -3,12 +3,14 @@ using JLD2
 using FastGaussQuadrature
 
 ## 
-# asymmetric cubature for a complete polynomial system of degree n = 5.
-n = 5
+# asymmetric cubature for a complete polynomial system of degree n.
+n = 7
 order = 2*n-1 
 xa, wa = gausslegendre(n) 
 nodes, weights = tensorrule(xa, wa, xa, wa, 2)
-nodes, weights = nonsymmetricquad(nodes, weights, order)
+nodes, weights = nonsymmetricquad(nodes, weights, order-1)
+println(nodes)
+println(weights)
 
 ## 
 # reconstruction of asymmetric cubatures for complete polynomials from order "a" upto order "b"

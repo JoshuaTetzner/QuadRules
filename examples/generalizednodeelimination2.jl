@@ -29,7 +29,7 @@ xa = Float64.(logquadx[N1-2].*2 .- 1)
 wa = Float64.(logquadw[N1-2].*2)
 xb, wb = gausslegendre(N2) 
 
-x, w = nonsymmetricquad3(sysa, sysb, xa, xb, wa, wb, order1, order2)
+x, w = nonsymmetricquad3(sysa, sysb, xa, xb, wa, wb, order1-2, order2-1)
 print("Degree p = 4")
 println(Float64.(x))
 println(Float64.(w))

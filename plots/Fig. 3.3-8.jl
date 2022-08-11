@@ -1,17 +1,19 @@
 using Plots
 using PyCall
-using HCubature
 using JLD2
 using FastGaussQuadrature
 
-x_val = 1
-y_val = 1
-
+# Fig. 3.3
 f(x, y) = x^10*y^10
+# Fig. 3.4
 #f(x, y) = x^10*y^10 + x^20 + y^20
+# Fig. 3.5
 #f(x, y) = x^55*y^55
+# Fig. 3.6
 #f(x, y) = sin(x)^2 + sin(y)^2
+# Fig. 3.7
 #f(x, y) = x^2*y^2*log(abs(x+2))
+# Fig. 3.8
 #f(x, y) = x^2*y^2*log(abs(x+1))
 
 #Tensorrule
@@ -65,14 +67,18 @@ for i = 1:length(csplw)
     push!(nsym, length(csplw[i]))
 end
 
+# Fig. 3.3
 trueval = 4/121
+# Fig. 3.4
 #trueval = 1052/2541
+# Fig. 3.5
 #trueval = 0
+# Fig. 3.6
 #trueval = 4-2*sin(2)
+# Fig. 3.7
 #trueval = log(9) - 52/27
+# Fig. 3.8
 #trueval = 4/27*(log(8)-4)
-
-##
 
 #Plots 
 if trueval != 0
@@ -96,14 +102,3 @@ p2 = plot(nnodesten, tenval, label = "tensorproduct",  marker = :a)
 plot!(nnodesdunavant, dunavantval, label = "quadpy(Dunavant)",  marker = :a)
 plot!(nnonsym, nonsymquadval, label = "nonsymmertric(Tetzner)",  marker = :a)
 plot!(nsym, symval, label = "symmertric(Tetzner)",  marker = :a)
-##
-
-(tenval)
-(nnodesten)
-(dunavantval)
-(nnodesdunavant)
-(nonsymquadval)
-(nnonsym)
-(symval)
-(nsym)
-#

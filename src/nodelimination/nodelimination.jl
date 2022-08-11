@@ -61,7 +61,7 @@ end
 
 function getA(x::Vector{T}, Φ) where {T <: AbstractFloat}
     A = zeros(T, length(Φ), Int(length(x)/3))
-    @hreads for j = 1:Int(length(x)/3)
+    @threads for j = 1:Int(length(x)/3)
         @threads for i in eachindex(Φ)
             A[i, j] = Φ[i](x[(j-1)*3+1], x[(j-1)*3+2])
         end
@@ -119,8 +119,28 @@ function nonsymmetricquad(
                 J = jacobian(dΦ_x, dΦ_y, Φ, x) 
                 fct = fmat(Φ, x)
                 x -= pinv(Float64.(J))*(fct-int_f)
+                # check interior points and positive weights
+                @threads for i = 0:(k-1)
+                    if abs(x[i*3+1]) > 1
+                        x[i*3+1] = sign(x[i*3+1])*0.9
+                    end
+                end
+
+                @threads for i = 0:(k-1)
+                    if abs(x[i*3+2]) > 1
+                        x[i*3+2] = sign(x[i*3+2])*0.9
+                    end
+                end
+
+                @threads for i = 0:(k-1)
+                    if x[i*3+3] < 0
+                        x[i*3+3] = eps(Float64)
+                    end
+                end
+                
                 ϵ = norm(int_f - getA(x, Φ) * x[3:3:(3*k)]) 
             end
+
             if !isapprox(ϵ, 0, atol=1e-14) && iter == 10 
                 x=savex
                 x[(3*currentindex+1):(3*currentindex+3)], delnode = 
