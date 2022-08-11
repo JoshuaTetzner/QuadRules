@@ -341,5 +341,5 @@ gq30logw = [
     big"0.00782767019549675715100064364777713048008869931291672091525079129829684057243125330"
 ]
 
-gqlogx = [gq3x, gq4x, gq5x, gq6x, gq7x, gq8x, gq9x, gq10x, gq15x, gq20x, gq25x, gq30x]
-gqlogw = [gq3w, gq4w, gq5w, gq6w, gq7w, gq8w, gq9w, gq10w, gq15w, gq20w, gq25w, gq30w]
+gqlogx = [gq3logx, gq4logx, gq5logx, gq6logx, gq7logx, gq8logx, gq9logx, gq10logx, gq15logx, gq20logx, gq25logx, gq30logx]
+gqlogw = [gq3logw, gq4logw, gq5logw, gq6logw, gq7logw, gq8logw, gq9logw, gq10logw, gq15logw, gq20logw, gq25logw, gq30logw]

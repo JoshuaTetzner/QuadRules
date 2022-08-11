@@ -23,11 +23,12 @@ end
 
 ## 
 # reconsruction of symmetric cubature rules for complete sets of polynomials up to maxorder. 
+# algortihm starts with random initial points, the resulting cubature rules can therefore differ.
 function symmetricparallel(maxorder::Int)
     f(x,y) = x^2*y^2
     found = zeros(Bool, maxorder)
     npoints = zeros(maxorder)
-    for order = 21:2:maxorder
+    for order = 3:2:maxorder
         println(order)
         add = 0
         while add <= 2 && !found[order]

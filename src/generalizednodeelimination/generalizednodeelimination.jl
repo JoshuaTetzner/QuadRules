@@ -13,90 +13,53 @@ function fmat(fct, x::Vector)
     return F
 end
 
-function getpolynomes(sysa, sysb, order1, order2)
+function getpolynomes(sysa, sysb, order)
     Φ=[]
     intf=[]
-    if order1 < order2
-        for i = 0:order1
-            for j = 0:(order2-2*i)
-                ϕ(x,y) = sysa.pl(
-                    sysa.systems[i+1], 
-                    sysa.segments, 
-                    big.(x)
-                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
-                push!(Φ, ϕ)
-                push!(intf, sysa.intpl[i+1]*sysb.intpl[j+1])    
-            end
-        end
-    else
-        for j = 0:order2
-            for i = 0:(order1-2*j)
-                ϕ(x,y) = sysa.pl(
-                    sysa.systems[i+1], 
-                    sysa.segments, 
-                    big.(x)
-                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
-                push!(Φ, ϕ)
-                push!(intf, sysa.intpl[i+1]*sysb.intpl[j+1])    
-            end
+    for i = 0:order
+        for j = 0:(order-i)
+            ϕ(x,y) = sysa.pl(
+                sysa.systems[i+1], 
+                sysa.segments, 
+                big.(x)
+            ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
+            push!(Φ, ϕ)
+            push!(intf, sysa.intpl[i+1]*sysb.intpl[j+1])    
         end
     end
+
     return Φ, intf
 end
 
-function getpolynomes_dx(sysa, sysb, order1, order2)
+function getpolynomes_dx(sysa, sysb, order)
     Φ=[]
-    if order1 < order2
-        for i = 0:order1
-            for j = 0:(order2-2*i)
-                ϕ(x,y) = sysa.dpl(
-                    sysa.systems[i+1], 
-                    sysa.segments, 
-                    big.(x)
-                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
-                push!(Φ, ϕ)    
-            end
-        end
-    else
-        for j = 0:order2
-            for i = 0:(order1-2*j)
-                ϕ(x,y) = sysa.dpl(
-                    sysa.systems[i+1], 
-                    sysa.segments, 
-                    big.(x)
-                ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
-                push!(Φ, ϕ)    
-            end
+    for i = 0:order
+        for j = 0:(order-i)
+            ϕ(x,y) = sysa.dpl(
+                sysa.systems[i+1], 
+                sysa.segments, 
+                big.(x)
+            ) * sysb.pl(sysb.systems[j+1], sysb.segments, big.(y))
+            push!(Φ, ϕ)    
         end
     end
+
     return Φ
 end
 
-function getpolynomes_dy(sysa, sysb, order1, order2)
+function getpolynomes_dy(sysa, sysb, order)
     Φ=[]
-    if order1 < order2
-        for i = 0:order1
-            for j = 0:(order2-2*i)
-                ϕ(x,y) = sysa.pl(
-                    sysa.systems[i+1], 
-                    sysa.segments, 
-                    big(x)
-                ) * sysb.dpl(sysb.systems[j+1], sysb.segments, big(y))
-                push!(Φ, ϕ)    
-            end
-        end
-    else
-        for j = 0:order2
-            for i = 0:(order1-2*j)
-                ϕ(x,y) = sysa.pl(
-                    sysa.systems[i+1], 
-                    sysa.segments, 
-                    big(x)
-                ) * sysb.dpl(sysb.systems[j+1], sysb.segments, big(y))
-                push!(Φ, ϕ)    
-            end
+    for i = 0:order
+        for j = 0:(order-i)
+            ϕ(x,y) = sysa.pl(
+                sysa.systems[i+1], 
+                sysa.segments, 
+                big(x)
+            ) * sysb.dpl(sysb.systems[j+1], sysb.segments, big(y))
+            push!(Φ, ϕ)    
         end
     end
+
     return Φ
 end
 
@@ -129,17 +92,15 @@ function nonsymmetricquad2(
     xb::Vector{T},
     wa::Vector{T},
     wb::Vector{T},
-    order1,
-    order2
+    order
 ) where {T <: AbstractFloat}
-    if false#length(sysa.intpl) != length(sysb.intpl)
+    if length(sysa.intpl) != length(sysb.intpl)
         return 0, 0
     else
-        println(order1)
-        println(order2)
-        Φ, int_f = getpolynomes(sysa, sysb, order1, order2)
-        dΦ_x = getpolynomes_dx(sysa, sysb, order1, order2)
-        dΦ_y = getpolynomes_dy(sysa, sysb, order1, order2)
+        println(order)
+        Φ, int_f = getpolynomes(sysa, sysb, order)
+        dΦ_x = getpolynomes_dx(sysa, sysb, order)
+        dΦ_y = getpolynomes_dy(sysa, sysb, order)
 
         nodes, weights = tensorrule(xa, wa, xb, wb, 2)
         n = length(weights)
@@ -149,8 +110,7 @@ function nonsymmetricquad2(
             x[(i-1)*3+2] = nodes[i,2]
             x[(i-1)*3+3] = weights[i]
         end
-        println(norm(int_f - getA(x, Φ) * x[3:3:(3*n)])) 
-        println(x)
+        #println(norm(int_f - getA(x, Φ) * x[3:3:(3*n)])) 
         
         for k = (n-1):-1:1        
             delnode = x[(3*k+1):(3*k+3)]
@@ -191,8 +151,12 @@ function nonsymmetricquad2(
                             x[i] = sign(x[i])*1
                         end
                     end
+                    for i = 3:3:3*k
+                        if x[i] < 0
+                            x[i] = eps(Float64)
+                        end
+                    end
                     ϵ = norm(int_f - getA(x, Φ) * x[3:3:(3*k)]) 
-                    println(ϵ)
                 end
                 if !isapprox(ϵ, 0, atol=1e-14)
                     x=savex

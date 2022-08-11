@@ -4,16 +4,15 @@ using FastGaussQuadrature
 
 ## 
 # asymmetric cubature for a complete polynomial system of degree n.
-n = 7
+n = 5
 order = 2*n-1 
 xa, wa = gausslegendre(n) 
 nodes, weights = tensorrule(xa, wa, xa, wa, 2)
-nodes, weights = nonsymmetricquad(nodes, weights, order-1)
-println(nodes)
-println(weights)
+nodes, weights = nonsymmetricquad(nodes, weights, order)
 
 ## 
 # reconstruction of asymmetric cubatures for complete polynomials from order "a" upto order "b"
+# the significance indices can be selected in src/nodelimination/nodelimination.jl
 function asymcub(a::Int, b::Int)
     order = a
     points = Int(ceil((order+1)/2))
@@ -33,4 +32,4 @@ function asymcub(a::Int, b::Int)
     end
 end
 
-asymcub(2,10)
+asymcub(3,15)
