@@ -23,7 +23,7 @@ include("quadratures/cubature/cspl.jl")
 include("quadratures/cubature/gclogquad.jl")
 include("quadratures/cubature/gclogrect.jl")
 include("quadratures/cubature/gcpol.jl")
-include("quadratures/getules.jl")
+include("quadratures/getrules.jl")
 
 include("utils/polynomes.jl")
 include("utils/tensorrule.jl")

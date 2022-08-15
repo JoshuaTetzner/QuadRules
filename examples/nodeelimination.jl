@@ -1,10 +1,9 @@
-using FileIO
 using JLD2
 using FastGaussQuadrature
-
-## 
+using QuadRules 
+##
 # asymmetric cubature for a complete polynomial system of degree n.
-n = 5
+n = 3
 order = 2*n-1 
 xa, wa = gausslegendre(n) 
 nodes, weights = tensorrule(xa, wa, xa, wa, 2)

@@ -31,7 +31,7 @@ Base.showerror(io::IO, e::CExeptionDegree) = print(
     "Only cubatures of odd degree 5..21 available."
 )
 
-Base.showerror(io::IO, e::CExeptionDegree) = print(
+Base.showerror(io::IO, e::ASCExeptionDegree) = print(
     io,
     "Only cubatures of degree 3..15 available."
 )
@@ -77,7 +77,7 @@ end
 
 function asymmetriccubature(degree::Int)
     if degree < 3 || degree > 15
-        throw(CExeptionDegree2())
+        throw(ASCExeptionDegree2())
     else
         return cplxb[degree-2], cplwb[degree-2]
     end

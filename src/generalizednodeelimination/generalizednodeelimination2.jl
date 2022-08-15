@@ -2,7 +2,7 @@ using SpecialPolynomials
 using LinearAlgebra
 using Base.Threads
 
-function fmat(fct, x::Vector)
+function fmat2(fct, x::Vector)
     F = zeros(Float64, length(fct))
     for i in eachindex(fct)
         for j = 1:3:length(x)
@@ -100,7 +100,7 @@ function getpolynomes_dy(sysa, sysb, order1, order2)
     return Φ
 end
 
-function jacobian(fdx, fdy, fdw, x::Vector)
+function jacobian2(fdx, fdy, fdw, x::Vector)
     J = zeros(Float64, length(fdx), length(x))
     @threads for i in eachindex(fdx)
         @threads for j = 1:3:length(x)
@@ -112,7 +112,7 @@ function jacobian(fdx, fdy, fdw, x::Vector)
     return J
 end
 
-function getA(x::Vector, Φ)
+function getA2(x::Vector, Φ)
     A = zeros(Float64, length(Φ), Int(length(x)/3))
     @threads for j = 1:Int(length(x)/3)
         @threads for i in eachindex(Φ)
@@ -145,7 +145,7 @@ function nonsymmetricquad3(
         x[(i-1)*3+2] = nodes[i,2]
         x[(i-1)*3+3] = weights[i]
     end
-    println(norm(int_f - getA(x, Φ) * x[3:3:(3*n)])) 
+    println(norm(int_f - getA2(x, Φ) * x[3:3:(3*n)])) 
     println(x)
     
     for k = (n-1):-1:1        
@@ -172,8 +172,8 @@ function nonsymmetricquad3(
             println(currentindex+1)
             while iter < 25 && !isapprox(ϵ, 0, atol=1e-14) && ϵ < 50
                 iter += 1
-                J = jacobian(dΦ_x, dΦ_y, Φ, x) 
-                fct = fmat(Φ, x)
+                J = jacobian2(dΦ_x, dΦ_y, Φ, x) 
+                fct = fmat2(Φ, x)
                 x -= pinv(Float64.(J))*(fct-int_f)
                 for i = 1:3:3*k
                     if abs(x[i]) > 1
@@ -185,7 +185,7 @@ function nonsymmetricquad3(
                         x[i] = sign(x[i])*1
                     end
                 end
-                ϵ = norm(int_f - getA(x, Φ) * x[3:3:(3*k)]) 
+                ϵ = norm(int_f - getA2(x, Φ) * x[3:3:(3*k)]) 
                 println(ϵ)
             end
             if !isapprox(ϵ, 0, atol=1e-14)

@@ -1,5 +1,4 @@
-using SpecialPolynomials
-using FastGaussQuadrature
+using QuadRules
 
 function logfct(n, x)
     if iseven(n)
@@ -13,7 +12,7 @@ function chebyshevpolynomials(n, x)
     return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-n = 6
+n = 4
 order = 2*n-1 
 @time sysa = nestedsystem(order, 50, 50, logfct)
 @time sysb = nestedsystem(order, 2, 30, chebyshevpolynomials)
