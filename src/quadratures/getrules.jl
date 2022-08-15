@@ -9,7 +9,7 @@ end
 mutable struct CExeptionDegree <: Exception
 end
 
-mutable struct CExeptionDegree2 <: Exception
+mutable struct ASCExeptionDegree <: Exception
 end
 
 mutable struct GQExeptionDegree <: Exception

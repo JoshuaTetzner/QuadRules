@@ -1,4 +1,5 @@
-using QuadRules
+using SpecialPolynomials
+using FastGaussQuadrature
 
 function logfct(n, x)
     if iseven(n)
