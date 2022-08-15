@@ -77,7 +77,7 @@ end
 
 function asymmetriccubature(degree::Int)
     if degree < 3 || degree > 15
-        throw(ASCExeptionDegree2())
+        throw(ASCExeptionDegree())
     else
         return cplxb[degree-2], cplwb[degree-2]
     end
