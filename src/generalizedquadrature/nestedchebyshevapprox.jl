@@ -1,5 +1,4 @@
 using Base.Threads
-using QuadGK
 
 mutable struct NestedSystem{T <: AbstractFloat}
     systems::Vector{Matrix}

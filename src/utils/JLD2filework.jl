@@ -1,7 +1,7 @@
 using JLD2
 
 symquad = load("symquad5.jld2")
-for i = 7:2:21
+for i = 5:2:19
     dict = load("symquad" * string(i) * ".jld2")
     merge!(symquad, dict)
 end
@@ -15,7 +15,7 @@ for i = 5:2:21
     println(i)
     println(nodes)
     println(weights)
-    #println(length(weights))
+    println(length(weights))
 end
 
 ##

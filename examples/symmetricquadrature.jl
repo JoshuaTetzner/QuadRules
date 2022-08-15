@@ -46,7 +46,7 @@ function symmetricparallel(maxorder::Int)
                     if norm(getsystem(nxvec[i][:], X, order)) < 1e-12 && 
                         isapprox(intval, 0.44444444444444, atol=1e-10)
                         for node in nodes
-                            if abs(node[1]) > 1 || abs(node[2]) > 1
+                            if abs(node[1]) > 1 || abs(node[2]) > 1 || minimum(weights) < 0
                                 fail = true
                             end      
                         end

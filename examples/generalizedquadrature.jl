@@ -42,7 +42,7 @@ function chebyshevpolynomials(n, x)
     return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-N = 15
+N = 12
 order = 2*N-1 
 println("nestedapprox")
 @time sys = nestedsystem(order, 2, 50, chebyshevpolynomials)
@@ -105,6 +105,8 @@ while c2 >= 1
     end
 end
 
+x
+w
 ##
 # correction function for generalized quadrature
 for i=3:10

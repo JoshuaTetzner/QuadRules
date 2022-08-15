@@ -4,9 +4,9 @@ using JLD2
 using FastGaussQuadrature
 
 # Fig. 3.3
-f(x, y) = x^10*y^10
+f(x, y) = x^6*y^6
 # Fig. 3.4
-#f(x, y) = x^10*y^10 + x^20 + y^20
+#f(x, y) = x^6*y^6 + x^12 + y^12
 # Fig. 3.5
 #f(x, y) = x^55*y^55
 # Fig. 3.6
@@ -19,7 +19,7 @@ f(x, y) = x^10*y^10
 #Tensorrule
 tenquadval = []
 nnodesten = []
-for i=2:15
+for i=2:10
     xa, wa = gausslegendre(i) 
     nodes, weights = tensorrule(xa, wa, xa, wa, 2)
     val = sum([f(nodes[i,1], nodes[i,2])*weights[i] for i in eachindex(weights)])
@@ -51,26 +51,28 @@ end
 nonsymquadval = []
 nnonsym = []
 
-for i = 1:length(cplw)
-    val = sum([f(cplx[i][j, 1], cplx[i][j, 2])*cplw[i][j] for j=1:length(cplw[i])])
+for d = 3:15
+    x, w = asymmetriccubature(d)
+    val = sum([f(x[j, 1], x[j, 2])*w[j] for j in eachindex(w)])
     push!(nonsymquadval, val)
-    push!(nnonsym, length(cplw[i]))
+    push!(nnonsym, length(w))
 end
 
 #symmetric(Tetzner)
 symquadval = []
 nsym = []
 
-for i = 1:length(csplw)
-    val = sum([f(csplx[i][j][1], csplx[i][j][2])*csplw[i][j] for j in eachindex(csplw[i])])
+for d = 5:2:21
+    x, w = symmetriccubature(d)
+    val = sum([f(x[j, 1], x[j, 2])*w[j] for j in eachindex(w)])
     push!(symquadval, val)
-    push!(nsym, length(csplw[i]))
+    push!(nsym, length(w))
 end
 
 # Fig. 3.3
-trueval = 4/121
+trueval = 4/49
 # Fig. 3.4
-#trueval = 1052/2541
+#trueval = 444/637
 # Fig. 3.5
 #trueval = 0
 # Fig. 3.6

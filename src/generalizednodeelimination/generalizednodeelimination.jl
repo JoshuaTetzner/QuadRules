@@ -121,11 +121,11 @@ function nonsymmetricquad2(
 
             println(k)
             # descending order
-            sindex = [i for i = k:-1:1]
+            #sindex = [i for i = k:-1:1]
             # sum(phi(x))
             #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) for i = 0:(k-1)] 
             # sum(phi(x)) * w
-            #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) * x[3*i+3] for i = 0:(k-1)] 
+            sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) * x[3*i+3] for i = 0:(k-1)] 
             counter = 1
             while counter <= k
                 counter += 1
