@@ -85,7 +85,7 @@ function getA1(x::Vector, Φ)
     return A
 end
 
-function nonsymmetricquad2(
+function nonsymmetricquadquad(
     sysa,
     sysb, 
     xa::Vector{T},
@@ -97,7 +97,6 @@ function nonsymmetricquad2(
     if length(sysa.intpl) != length(sysb.intpl)
         return 0, 0
     else
-        println(order)
         Φ, int_f = getpolynomes(sysa, sysb, order)
         dΦ_x = getpolynomes_dx(sysa, sysb, order)
         dΦ_y = getpolynomes_dy(sysa, sysb, order)
@@ -118,14 +117,14 @@ function nonsymmetricquad2(
             pop!(x)
             pop!(x)
             savex = x
-
+            print("number of points: ")
             println(k)
             # descending order
-            #sindex = [i for i = k:-1:1]
+            sindex = [i for i = k:-1:1]
             # sum(phi(x))
             #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) for i = 0:(k-1)] 
             # sum(phi(x)) * w
-            sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) * x[3*i+3] for i = 0:(k-1)] 
+            #sindex = [sum([Φ[j](x[3*i+1], x[3*i+2])^2 for j in eachindex(Φ)]) * x[3*i+3] for i = 0:(k-1)] 
             counter = 1
             while counter <= k
                 counter += 1
@@ -134,7 +133,7 @@ function nonsymmetricquad2(
 
                 iter = 0
                 ϵ=1
-                print("cindex: ")
+                print("current index: ")
                 println(currentindex+1)
                 while iter < 25 && !isapprox(ϵ, 0, atol=1e-14) && ϵ < 50
                     iter += 1

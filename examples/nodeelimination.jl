@@ -1,7 +1,13 @@
 using JLD2
 using FastGaussQuadrature
 using QuadRules 
+
+# asymmetric cubature for a complete system of polynomial depgree p = 5
+p = 5
+x, w = asymmetriccubature(5)
+
 ##
+
 # asymmetric cubature for a complete polynomial system of degree n.
 n = 3
 order = 2*n-1 
@@ -10,6 +16,7 @@ nodes, weights = tensorrule(xa, wa, xa, wa, 2)
 nodes, weights = nonsymmetricquad(nodes, weights, order)
 
 ## 
+
 # reconstruction of asymmetric cubatures for complete polynomials from order "a" upto order "b"
 # the significance indices can be selected in src/nodelimination/nodelimination.jl
 function asymcub(a::Int, b::Int)

@@ -36,28 +36,30 @@ for i = 5:2:21
 end
 
 ##
-for i in eachindex(clogw)
-    print(i+3)
-    for j in eachindex(clogw[i])
+for i = 3:9
+    print(i)
+    x, w = generalizedcubature(i)
+    for j in eachindex(w)
         print("&")
-        print(Float64(clogw[i][j]))
+        print(Float64(w[j]))
         print("&")
-        print(Float64(clogx[i][j,2]))
+        print(Float64(x[j,1]))
         print("&")
-        print(Float64(clogx[i][j,1]))
+        print(Float64(x[j,2]))
         println("\\\\")
     end
 end
 ##
-for i in eachindex(gclogw)
-    print(i+2)
-    for j in eachindex(gclogw[i])
+for i = 4:11
+    print(i)
+    x, w = generalizedcubature(i, type = :logquad)
+    for j in eachindex(w)
         print("&")
-        print(Float64(gclogw[i][j]))
+        print(Float64(w[j]))
         print("&")
-        print(Float64(gclogx[i][j,1]))
+        print(Float64(x[j,1]))
         print("&")
-        print(Float64(gclogx[i][j,2]))
+        print(Float64(x[j,2]))
         println("\\\\")
     end
 end

@@ -2,7 +2,12 @@ using FileIO
 using JLD2
 using Base.Threads
 
+# symmertric cubature of complete system with polynomial degree p = 5
+p = 5
+x, w = symmetriccubature(5)
+
 ## 
+
 # singel symmetric cubature rule for a complete set of polynomials with given order. 
 # Symmetric cubatures are not always found for random start values. 
 # function might have to be called more than once.
@@ -22,6 +27,7 @@ for nxvec in nxvecs
 end
 
 ## 
+
 # reconsruction of symmetric cubature rules for complete sets of polynomials up to maxorder. 
 # algortihm starts with random initial points, the resulting cubature rules can therefore differ.
 function symmetricparallel(maxorder::Int)

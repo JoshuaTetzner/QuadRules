@@ -3,6 +3,9 @@
 mutable struct GCExeptionDegree <: Exception
 end
 
+mutable struct GCRExeptionDegree <: Exception
+end
+
 mutable struct GCExeptionType <: Exception
 end
 
@@ -19,6 +22,11 @@ end
 Base.showerror(io::IO, e::GCExeptionDegree) = print(
     io,
     "Only cubatures of degree 4..11 available."
+)
+
+Base.showerror(io::IO, e::GCRExeptionDegree) = print(
+    io,
+    "Only cubatures of degree 3..9 available."
 )
 
 Base.showerror(io::IO, e::GCExeptionType) = print(
@@ -42,24 +50,27 @@ Base.showerror(io::IO, e::GQExeptionDegree) = print(
 )
 
 function generalizedcubature(degree::Int; type = :logrect)
-    if degree < 4 || degree > 11
-        throw(GCExeptionDegree())
-    else
-        if type == :logquad
-            return gclogquadxb[degree-3], gclogquadwb[degree-3] 
+    if type == :logrect
+        if degree < 3 || degree > 9
+            throw(GCRExeptionDegree())
         else
-            if type == :logrect
-                return gclogrectxb[degree-3], gclogrectwb[degree-3] 
+            return gclogrectxb[degree-2], gclogrectwb[degree-2] 
+        end
+    else
+        if degree < 4 || degree > 11
+            throw(GCExeptionDegree())
+        else
+            if type == :logquad
+                return gclogquadxb[degree-3], gclogquadwb[degree-3] 
             else
                 if type ==:pol
                     return gcpolxb[degree-3], gcpolwb[degree-3] 
                 else
                     throw(GCExeptionType())
-                end
+                end    
             end
         end
     end
-
 end
 
 function symmetriccubature(degree::Int)

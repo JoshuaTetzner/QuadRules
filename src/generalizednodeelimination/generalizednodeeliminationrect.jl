@@ -122,7 +122,7 @@ function getA2(x::Vector, Φ)
     return A
 end
 
-function nonsymmetricquad3(
+function nonsymmetricquadrect(
     sysa,
     sysb, 
     xa::Vector{T},
@@ -132,8 +132,6 @@ function nonsymmetricquad3(
     order1,
     order2
 ) where {T <: AbstractFloat}
-    println(order1)
-    println(order2)
     Φ, int_f = getpolynomes(sysa, sysb, order1, order2)
     dΦ_x = getpolynomes_dx(sysa, sysb, order1, order2)
     dΦ_y = getpolynomes_dy(sysa, sysb, order1, order2)
@@ -145,8 +143,7 @@ function nonsymmetricquad3(
         x[(i-1)*3+2] = nodes[i,2]
         x[(i-1)*3+3] = weights[i]
     end
-    println(norm(int_f - getA2(x, Φ) * x[3:3:(3*n)])) 
-    println(x)
+    #println(norm(int_f - getA2(x, Φ) * x[3:3:(3*n)])) 
     
     for k = (n-1):-1:1        
         delnode = x[(3*k+1):(3*k+3)]
@@ -154,6 +151,7 @@ function nonsymmetricquad3(
         pop!(x)
         pop!(x)
         savex = x
+        print("number of points: ")
         println(k)
         # descending order
         sindex = [i for i = k:-1:1]
@@ -186,7 +184,6 @@ function nonsymmetricquad3(
                     end
                 end
                 ϵ = norm(int_f - getA2(x, Φ) * x[3:3:(3*k)]) 
-                println(ϵ)
             end
             if !isapprox(ϵ, 0, atol=1e-14)
                 x=savex

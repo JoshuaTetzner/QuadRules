@@ -6,7 +6,7 @@ using FastGaussQuadrature
 # Fig. 3.11
 #f(x, y) = x^2*y^2*log(x+1) + x^4 + y^4
 # Fig. 3.12
-#f(x, y) = x^2*y^4*log(x+1) + x^4*log(x+1) + y^8
+f(x, y) = x^2*y^4*log(x+1) + x^4*log(x+1) + y^8
 
 #quadratic nodeelimination
 asgg = []
@@ -49,7 +49,7 @@ end
 # Fig. 3.11
 #trueval = 4/135 * (34 + 5*log(8))
 # Fig. 3.12
-#trueval = 16/225 * (15*log(2)-16)
+trueval = 16/225 * (15*log(2)-16)
 
 #Plots 
 pggval = abs.((pgg .- trueval)) ./ trueval .+ eps(Float64)
@@ -63,3 +63,13 @@ asrggval = 10 .* log10.(abs.(asrggval))
 p2 = plot(npgg, pggval, label = "tensorproduct",  marker = :a)
 plot!(nasgg, asggval, label = "eliminated",  marker = :a)
 plot!(nasrgg, asrggval, label = "rectangle eliminated",  marker = :a)
+##
+
+pggval
+npgg
+
+asggval
+nasgg
+
+asrggval
+nasrgg

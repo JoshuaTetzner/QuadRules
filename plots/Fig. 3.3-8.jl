@@ -4,7 +4,7 @@ using JLD2
 using FastGaussQuadrature
 
 # Fig. 3.3
-f(x, y) = x^6*y^6
+#f(x, y) = x^6*y^6
 # Fig. 3.4
 #f(x, y) = x^6*y^6 + x^12 + y^12
 # Fig. 3.5
@@ -70,7 +70,7 @@ for d = 5:2:21
 end
 
 # Fig. 3.3
-trueval = 4/49
+#trueval = 4/49
 # Fig. 3.4
 #trueval = 444/637
 # Fig. 3.5

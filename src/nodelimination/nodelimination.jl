@@ -1,79 +1,79 @@
 using LinearAlgebra
 using Base.Threads
 
+function fmat(fct, x::Vector{T}) where {T <: AbstractFloat}
+    F = zeros(T, length(fct))
+    for i in eachindex(fct)
+        for j = 1:3:length(x)
+            F[i] += fct[i](x[j], x[j+1])*x[j+2]
+        end
+    end
+
+    return F
+end
+
+function getpolynomes(p::Int)
+    Φ=[]
+    for i = 0:p
+        for j = 0:p-i
+            ϕ(x,y) = legendre(i,x)*legendre(j,y) * sqrt((2*i + 1)/2)* sqrt((2*j + 1)/2)  
+            push!(Φ, ϕ)    
+        end
+    end
+    return Φ
+end
+
+function getpolynomes_dx(p::Int)
+    Φ=[]
+    for i = 0:p
+        for j = 0:p-i
+            ϕ(x,y) = (i + 1)/(1 - x^2) * (x * legendre(i, x) - legendre(i+1, x)) * 
+                legendre(j,y) * sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2)   
+            push!(Φ, ϕ)    
+        end
+    end
+    return Φ
+end
+
+function getpolynomes_dy(p::Int)
+    Φ=[]
+    for i = 0:p
+        for j = 0:p-i
+            ϕ(x,y) = (j + 1)/(1 - y^2) * (y * legendre(j, y) - legendre(j+1, y)) * 
+                legendre(i,x) * sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2)  
+            push!(Φ, ϕ)    
+        end
+    end
+    return Φ
+end
+
+function jacobian(fdx, fdy, fdw, x::Vector{T}) where {T <: AbstractFloat}
+    J = zeros(T, length(fdx), length(x))
+    @threads for i in eachindex(fdx)
+        @threads for j = 1:3:length(x)
+            J[i, j] = fdx[i](x[j], x[j+1]) * x[j+2]
+            J[i, j+1] = fdy[i](x[j], x[j+1]) * x[j+2]
+            J[i, j+2] = fdw[i](x[j], x[j+1])
+        end
+    end
+    return J
+end
+
+function getA(x::Vector{T}, Φ) where {T <: AbstractFloat}
+    A = zeros(T, length(Φ), Int(length(x)/3))
+    @threads for j = 1:Int(length(x)/3)
+        @threads for i in eachindex(Φ)
+            A[i, j] = Φ[i](x[(j-1)*3+1], x[(j-1)*3+2])
+        end
+    end
+    return A
+end
+
 function nonsymmetricquad(
     nodes::Matrix{T},
     weights::Vector{T},
     order::Int
 ) where {T <: AbstractFloat}
-
-    function fmat(fct, x::Vector{T}) where {T <: AbstractFloat}
-        F = zeros(T, length(fct))
-        for i in eachindex(fct)
-            for j = 1:3:length(x)
-                F[i] += fct[i](x[j], x[j+1])*x[j+2]
-            end
-        end
-    
-        return F
-    end
-
-    function getpolynomes(p::Int)
-        Φ=[]
-        for i = 0:p
-            for j = 0:p-i
-                ϕ(x,y) = legendre(i,x)*legendre(j,y) * sqrt((2*i + 1)/2)* sqrt((2*j + 1)/2)  
-                push!(Φ, ϕ)    
-            end
-        end
-        return Φ
-    end
-
-    function getpolynomes_dx(p::Int)
-        Φ=[]
-        for i = 0:p
-            for j = 0:p-i
-                ϕ(x,y) = (i + 1)/(1 - x^2) * (x * legendre(i, x) - legendre(i+1, x)) * 
-                    legendre(j,y) * sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2)   
-                push!(Φ, ϕ)    
-            end
-        end
-        return Φ
-    end
-
-    function getpolynomes_dy(p::Int)
-        Φ=[]
-        for i = 0:p
-            for j = 0:p-i
-                ϕ(x,y) = (j + 1)/(1 - y^2) * (y * legendre(j, y) - legendre(j+1, y)) * 
-                    legendre(i,x) * sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2)  
-                push!(Φ, ϕ)    
-            end
-        end
-        return Φ
-    end
-
-    function jacobian(fdx, fdy, fdw, x::Vector{T}) where {T <: AbstractFloat}
-        J = zeros(T, length(fdx), length(x))
-        @threads for i in eachindex(fdx)
-            @threads for j = 1:3:length(x)
-                J[i, j] = fdx[i](x[j], x[j+1]) * x[j+2]
-                J[i, j+1] = fdy[i](x[j], x[j+1]) * x[j+2]
-                J[i, j+2] = fdw[i](x[j], x[j+1])
-            end
-        end
-        return J
-    end
-
-    function getA(x::Vector{T}, Φ) where {T <: AbstractFloat}
-        A = zeros(T, length(Φ), Int(length(x)/3))
-        @threads for j = 1:Int(length(x)/3)
-            @threads for i in eachindex(Φ)
-                A[i, j] = Φ[i](x[(j-1)*3+1], x[(j-1)*3+2])
-            end
-        end
-        return A
-    end
 
     print("Order: ")
     println(order)

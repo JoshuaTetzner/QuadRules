@@ -96,11 +96,9 @@ function nestedquadrature(
     intσ, intη = intση(sgsys, sys, α, β, t)
 
     println("Progress:")
-    print(".")
     step = 0.1
     ϵ = 1
     while t <= 1.1
-        print(".")
         xnew = x
         iter = 0
         ϵ = 1
@@ -139,8 +137,9 @@ function nestedquadrature(
             step -= t-1
             t = 1 
         end
-        println(Float64.(ϵ))
-        println(Float64.(x))  
+        #println(Float64.(ϵ))
+        #println(Float64.(x))  
+        print("t = ")
         println(t)    
     end
 

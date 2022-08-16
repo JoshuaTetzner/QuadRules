@@ -1,8 +1,13 @@
 using SpecialPolynomials
 using FastGaussQuadrature
 
+# generalized quadrature for logarithmic system with n = 5 points
+n = 5
+x, w = generalizedquadrature(n)
+
 ##
-# generalized quadrature log(x+1) order N = 5
+
+# generalized quadrature for log(x+1) with N = 5 points
 function logfct(n, x)
     if iseven(n)
         return basis.(SpecialPolynomials.Chebyshev, Int(n/2))(x)
@@ -28,7 +33,8 @@ x, w = gausslegendre(N)
 x, w, e = nestedquadrature(sgsys, sys, big.(x), tol=1e-64)
 
 ##
-# generalized quadrature with second continuation
+
+# generalized quadrature with second continuation with N = 10 points
 
 function logfct(n, x)
     if iseven(n)
@@ -42,7 +48,7 @@ function chebyshevpolynomials(n, x)
     return basis.(SpecialPolynomials.Chebyshev, n)(x)
 end
 
-N = 12
+N = 10
 order = 2*N-1 
 println("nestedapprox")
 @time sys = nestedsystem(order, 2, 50, chebyshevpolynomials)
@@ -103,14 +109,4 @@ while c2 >= 1
         step = step/2
         c2-=step
     end
-end
-
-x
-w
-##
-# correction function for generalized quadrature
-for i=3:10
-    x, w = correctlog(logquadx[i-2])
-    println(x)
-    println(w)
 end

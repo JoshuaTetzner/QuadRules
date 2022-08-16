@@ -10,8 +10,8 @@ include("generalizedquadrature/generalizedquadrature.jl")
 include("generalizedquadrature/orthonormal.jl")
 include("generalizedquadrature/errorcorrection.jl")
 
-include("generalizednodeelimination/generalizednodeelimination.jl")
-include("generalizednodeelimination/generalizednodeelimination2.jl")
+include("generalizednodeelimination/generalizednodeeliminationquad.jl")
+include("generalizednodeelimination/generalizednodeeliminationrect.jl")
 
 include("nodelimination/nodelimination.jl")
 
@@ -28,8 +28,8 @@ include("quadratures/getrules.jl")
 include("utils/polynomes.jl")
 include("utils/tensorrule.jl")
 
-export nonsymmetricquad2
-export nonsymmetricquad3
+export nonsymmetricquadquad
+export nonsymmetricquadrect
 
 export correctlog
 export nestedquadrature
