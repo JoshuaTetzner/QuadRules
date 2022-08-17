@@ -1,6 +1,7 @@
 using FileIO
 using JLD2
 using Base.Threads
+using QuadRules
 
 # symmertric cubature of complete system with polynomial degree p = 5
 p = 5

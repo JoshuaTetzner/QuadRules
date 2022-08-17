@@ -1,5 +1,6 @@
 using SpecialPolynomials
 using FastGaussQuadrature
+using QuadRules
 
 # generalized cubature for a complete rectangle systems of degree p
 p = 5
@@ -35,7 +36,7 @@ sysb = gramschmidt(sysb)
 xa, wa = generalizedquadrature(p1)
 xb, wb = gausslegendre(p2) 
 
-x, w = nonsymmetricquadrect(sysa, sysb, xa, xb, wa, wb, order1, order2)
+x, w = nonsymmetricquadrect(sysa, sysb, Float64.(xa), xb, Float64.(wa), wb, order1, order2)
 print("Degree p = ")
 print(2*p2-1)
 println(x)
@@ -58,13 +59,22 @@ for p = 3:5
     xa, wa = generalizedquadrature(p1)
     xb, wb = gausslegendre(p2) 
 
-    x, w = nonsymmetricquadquad(sysa, sysb, xa, xb, wa, wb, order1-2, order2-1)
+    x, w = nonsymmetricquadquad(
+        sysa,
+        sysb,
+        Float64.(xa),
+        xb,
+        Float64.(wa),
+        wb,
+        order1-2,
+        order2-1
+    )
     print("Degree p = ")
     print(2*p-2)
     println(x)
     println(w)
 
-    x, w = nonsymmetricquadquad(sysa, sysb, xa, xb, wa, wb, order1, order2)
+    x, w = nonsymmetricquadquad(sysa, sysb, Float64.(xa), xb, Float64.(wa), wb, order1, order2)
     print("Degree p = ")
     print(2*p-1)
     println(x)

@@ -39,6 +39,7 @@ export gramschmidt
 export nonsymmetricquad
 
 export symquadratur
+export getcombinations
 
 export generalizedcubature
 export symmetriccubature

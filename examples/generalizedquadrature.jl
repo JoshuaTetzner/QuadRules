@@ -1,5 +1,6 @@
 using SpecialPolynomials
 using FastGaussQuadrature
+using QuadRules
 
 # generalized quadrature for logarithmic system with n = 5 points
 n = 5
