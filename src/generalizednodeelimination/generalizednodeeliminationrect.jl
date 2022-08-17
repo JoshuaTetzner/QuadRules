@@ -13,7 +13,7 @@ function fmat2(fct, x::Vector)
     return F
 end
 
-function getpolynomes(sysa, sysb, order1, order2)
+function getpolynomes2(sysa, sysb, order1, order2)
     Φ=[]
     intf=[]
     if order1 < order2
@@ -44,7 +44,7 @@ function getpolynomes(sysa, sysb, order1, order2)
     return Φ, intf
 end
 
-function getpolynomes_dx(sysa, sysb, order1, order2)
+function getpolynomes2_dx(sysa, sysb, order1, order2)
     Φ=[]
     if order1 < order2
         for i = 0:order1
@@ -72,7 +72,7 @@ function getpolynomes_dx(sysa, sysb, order1, order2)
     return Φ
 end
 
-function getpolynomes_dy(sysa, sysb, order1, order2)
+function getpolynomes2_dy(sysa, sysb, order1, order2)
     Φ=[]
     if order1 < order2
         for i = 0:order1
@@ -132,9 +132,9 @@ function nonsymmetricquadrect(
     order1,
     order2
 ) where {T <: AbstractFloat}
-    Φ, int_f = getpolynomes(sysa, sysb, order1, order2)
-    dΦ_x = getpolynomes_dx(sysa, sysb, order1, order2)
-    dΦ_y = getpolynomes_dy(sysa, sysb, order1, order2)
+    Φ, int_f = getpolynomes2(sysa, sysb, order1, order2)
+    dΦ_x = getpolynomes2_dx(sysa, sysb, order1, order2)
+    dΦ_y = getpolynomes2_dy(sysa, sysb, order1, order2)
     nodes, weights = tensorrule(xa, wa, xb, wb, 2)
     n = length(weights)
     x = zeros(T, 3*length(weights))

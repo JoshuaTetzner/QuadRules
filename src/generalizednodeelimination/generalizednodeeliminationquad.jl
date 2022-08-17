@@ -13,7 +13,7 @@ function fmat1(fct, x::Vector)
     return F
 end
 
-function getpolynomes(sysa, sysb, order)
+function getpolynomes1(sysa, sysb, order)
     Φ=[]
     intf=[]
     for i = 0:order
@@ -31,7 +31,7 @@ function getpolynomes(sysa, sysb, order)
     return Φ, intf
 end
 
-function getpolynomes_dx(sysa, sysb, order)
+function getpolynomes1_dx(sysa, sysb, order)
     Φ=[]
     for i = 0:order
         for j = 0:(order-i)
@@ -47,7 +47,7 @@ function getpolynomes_dx(sysa, sysb, order)
     return Φ
 end
 
-function getpolynomes_dy(sysa, sysb, order)
+function getpolynomes1_dy(sysa, sysb, order)
     Φ=[]
     for i = 0:order
         for j = 0:(order-i)
@@ -97,9 +97,9 @@ function nonsymmetricquadquad(
     if length(sysa.intpl) != length(sysb.intpl)
         return 0, 0
     else
-        Φ, int_f = getpolynomes(sysa, sysb, order)
-        dΦ_x = getpolynomes_dx(sysa, sysb, order)
-        dΦ_y = getpolynomes_dy(sysa, sysb, order)
+        Φ, int_f = getpolynomes1(sysa, sysb, order)
+        dΦ_x = getpolynomes1_dx(sysa, sysb, order)
+        dΦ_y = getpolynomes1_dy(sysa, sysb, order)
 
         nodes, weights = tensorrule(xa, wa, xb, wb, 2)
         n = length(weights)

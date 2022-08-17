@@ -32,11 +32,13 @@ sysb = nestedsystem(order, 2, 30, chebyshevpolynomials)
 sysb = gramschmidt(sysb)
 
 xa, wa = generalizedquadrature(p)
+xa = Float64.(xa) .* 2 .- 1
+wa = Float64.(wa) .* 2
 xb, wb = gausslegendre(p) 
 
-x, w = nonsymmetricquadquad(sysa, sysb, Float64.(xa), xb, Float64.(wa), wb, order)
+x, w = nonsymmetricquadquad(sysa, sysb, xa, xb, wa, wb, order)
 print("Degree p = ")
-print(2*p-1)
+println(2*p-1)
 println(Float64.(x))
 println(Float64.(w))
 
@@ -53,17 +55,19 @@ for p = 3:5
     sysb = gramschmidt(sysb)
     
     xa, wa = generalizedquadrature(p)
+    xa = Float64.(xa) .* 2 .- 1
+    wa = Float64.(wa) .* 2
     xb, wb = gausslegendre(p) 
     
-    x, w = nonsymmetricquadquad(sysa, sysb, Float64.(xa), xb, Float64.(wa), wb, order-1)
+    x, w = nonsymmetricquadquad(sysa, sysb, xa, xb, wa, wb, order-1)
     print("Degree p = ")
-    print(2*p-2)
+    println(2*p-2)
     println(Float64.(x))
     println(Float64.(w))
 
-    x, w = nonsymmetricquadquad(sysa, sysb, Float64.(xa), xb, Float64.(wa), wb, order)
+    x, w = nonsymmetricquadquad(sysa, sysb, xa, xb, wa, wb, order)
     print("Degree p = ")
-    print(2*p-1)
+    println(2*p-1)
     println(Float64.(x))
     println(Float64.(w))
 end
