@@ -1,5 +1,6 @@
 using SpecialPolynomials
 using FastGaussQuadrature
+using QuadRules
 
 # generalized cubature for a complete quadratic systems of degree d
 d = 5
