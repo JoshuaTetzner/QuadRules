@@ -102,7 +102,7 @@ function generalizedquadrature(n::Int)
         if n in rules
             gqlogx[8+Int((n-10)/5)], gqlogw[8+Int((n-10)/5)] 
         else
-            throw(GQxeptionDegree())
+            throw(GQExptionDegree())
         end
     end
 end
