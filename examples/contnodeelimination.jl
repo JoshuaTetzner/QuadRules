@@ -9,22 +9,29 @@ using HCubature
 #xa, wa = gausslegendre(n) 
 #nodes, weights = tensorrule(xa, wa, xa, wa, 2)
 #nodes, weights = asymmetriccubature(12)
-nodes = c13plSFx
-weights = c13plSFw
-order = 12
+nodes = c9plSFx
+weights = c9plSFw
+order = 8
 print("Knoten: ")
 println(length(weights))
-nodes2, weights2 = contnonsymmetricquad2(nodes, weights, order)
+@time nodes2, weights2 = contnonsymmetricquad2(nodes, weights, order)
 print("Knoten danach: ")
 println(length(weights2))
 ##
-f(x, y) = x^11*y^4
-println(length(weights2))
-println(sum([f(nodes2[i, 1], nodes2[i,2])* weights2[i] for i in eachindex(weights2)]))
-hcubature(x->f(x[1], x[2]), [-1,-1], [1, 1])
 
-using Plots
-scatter(nodes[:, 1], nodes[:,2])
+for n = 3:11
+    nodes = cplxb[n-2]
+    weights = cplwb[n-2]
+    order = n
+    println("\n")
+    print("Order: ")
+    println(order)
+    print("Knoten: ")
+    println(length(weights))
+    nodes2, weights2 = contnonsymmetricquad2(nodes, weights, order)
+    print("Knoten danach: ")
+    println(length(weights2))
+end
 
-sum(nodes .* weights)
-sum(nodes)
+##
+

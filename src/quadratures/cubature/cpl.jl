@@ -261,5 +261,5 @@ const cplSFw = [c3plSFw, c4plSFw, c5plSFw, c6plSFw, c7plSFw, c8plSFw, c9plSFw, c
 
 
 # best rule
-const cplxb = [c3plx, c4plx, c5plx, c6plx, c7plx, c8plx, c9plx, c10plx, c11pls1x, c12pls1x, c13pls1x, c14pls1x, c15pls2x, c15pls2x, c15pls2x, c15pls2x, c16pls1x, c17pls1x, c18pls2x, c19pls2x, c20pls1x, c21pls1x, c22pls1x, c23pls1x]
-const cplwb = [c3plw, c4plw, c5plw, c6plw, c7plw, c8plw, c9plw, c10plw, c11pls1w, c12pls1w, c13pls1w, c14pls1w, c15pls2w, c15pls2w, c15pls2w, c15pls2w, c16pls1w, c17pls1w, c18pls2w, c19pls2w, c20pls1w, c21pls1w, c22pls1w, c23pls1w]
+const cplxb = [c3plx, c4plx, c5plx, c6plx, c7plx, c8plx, c9plx, c10plx, c11pls1x, c12pls1x, c13pls1x, c14pls1x, c15pls2x, c16pls1x, c17pls1x, c18pls2x, c19pls2x, c20pls1x, c21pls1x, c22pls1x, c23pls1x]
+const cplwb = [c3plw, c4plw, c5plw, c6plw, c7plw, c8plw, c9plw, c10plw, c11pls1w, c12pls1w, c13pls1w, c14pls1w, c15pls2w, c16pls1w, c17pls1w, c18pls2w, c19pls2w, c20pls1w, c21pls1w, c22pls1w, c23pls1w]
