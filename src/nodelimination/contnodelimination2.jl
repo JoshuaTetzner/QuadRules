@@ -136,8 +136,8 @@ function contnonsymmetricquad2(
         pop!(x)
         pop!(x)
         
-        #print("n-Points: ")
-        #println(length(x)/3 + 1)
+        print("n-Points: ")
+        println(length(x)/3 + 1)
         Ient = 1*Matrix(I, length(x), length(x)) 
         J = zeros(Float64, length(dΦ_x), length(x))
         H = zeros(Float64, length(x), length(x))
@@ -152,8 +152,8 @@ function contnonsymmetricquad2(
         saver .= delnode
         for ind = 1:Int(length(x)/3)
             
-            #print("Elim.-index: ")
-            #println(elimind)
+            print("Elim.-index: ")
+            println(elimind)
             failed = false
             savex = x
             factor = 0.1
@@ -163,7 +163,8 @@ function contnonsymmetricquad2(
                 end
                 saverx .= x
                 iter = 0
-                ϵ = norm(x)
+                ϵ = norm(int_f - (getA(x, Φ) * x[3:3:end] + fmat(Φ, delnode)))
+               
                 λ = 0.01
                 while iter != 100 && !isapprox(ϵ, 0, atol=1e-14)
 
@@ -173,24 +174,30 @@ function contnonsymmetricquad2(
                     #Levenberg-Marquart
                     H .= transpose(J)*J 
                     xdiff = pinv((H + λ .* (diag(H).* Ient))) * transpose(J) * F
-                    ϵ1 = norm(xdiff)
+                    ϵ1 = norm(int_f - (getA(x-xdiff, Φ) * x[3:3:end] + fmat(Φ, delnode)))
                 
-                    if ϵ1 < 2*ϵ
+                    if ϵ1 < ϵ
                         ϵ = ϵ1
                         x -= xdiff
                         λ = λ / 3
                     else
                         λ = λ * 2
+                        if λ > 100 
+                            break
+                        end
                     end
-                    
-                    iter+=1
+
                     x = checkinterior(x)
 
                     iter += 1
                 end
-                
+                print("delnode: ")
+                println(delnode[3])
+                println(ϵ)
+
                 if isapprox(ϵ, 0, atol=1e-14)
                     if isapprox(delnode[3], 0)
+                        println("eliminated")
                         break
                     else
                         if factor < 0.1

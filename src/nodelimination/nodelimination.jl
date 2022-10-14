@@ -92,7 +92,7 @@ function nonsymmetricquad(
         x[(i-1)*3+2] = nodes[i,2]
         x[(i-1)*3+3] = weights[i]
     end
-
+    println(norm(int_f - getA(x, Φ) * x[3:3:end]))
     for k = (n-1):-1:1        
         delnode = x[(3*k+1):(3*k+3)]
         pop!(x)
