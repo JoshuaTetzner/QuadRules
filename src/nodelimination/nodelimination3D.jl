@@ -160,11 +160,11 @@ function nonsymmetricquad3D(
         savex = x
         
         Ient = 1*Matrix(I, length(x), length(x)) 
+        # allocation
         J = zeros(Float64, length(dΦ_x), length(x))
         H = zeros(Float64, length(x), length(x))
         F = zeros(Float64, length(Φ))
 
-        #sindex = [sum([Φ[j](x[4*i+1], x[4*i+2], x[4*i+3])^2 for j in eachindex(Φ)]) for i = 0:(k-1)] 
         sindex = [sum([Φ[j](x[4*i+1], x[4*i+2], x[4*i+3])^2 for j in eachindex(Φ)]) * x[4*i+4] for i = 0:(k-1)] 
 
         counter = 1
@@ -186,7 +186,7 @@ function nonsymmetricquad3D(
                 F .= fmat(Φ, x) - int_f
                 J .= jacobian(dΦ_x, dΦ_y, dΦ_z, Φ, x)
                 H .= transpose(J)*J 
-                #println(cond((H + λ .* (diag(H).* Ient))))
+
                 xdiff = pinv((H + λ .* (diag(H).* Ient))) * transpose(J) * F
                 ϵ1 = norm(int_f - getA(x-xdiff, Φ) * x[4:4:(4*k)])
             
@@ -200,17 +200,14 @@ function nonsymmetricquad3D(
                     if λ < 100
                         λ = λ * 4
                     else
-                        #println(λ)
                         iter = 500
                         break
                     end
                 end
             
                 x = checkinterior(x)
-                
                 ϵ = norm(int_f - getA(x, Φ) * x[4:4:(4*k)]) 
             end
-            println(ϵ)
             if !isapprox(ϵ, 0, atol=1e-14) && iter == 500 
                 x=savex
                 x[(4*currentindex+1):(4*currentindex+4)], delnode = 

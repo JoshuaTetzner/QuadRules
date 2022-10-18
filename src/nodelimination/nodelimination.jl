@@ -75,8 +75,8 @@ function nonsymmetricquad(
     order::Int
 ) where {T <: AbstractFloat}
 
-    print("Order: ")
-    println(order)
+    #print("Order: ")
+    #println(order)
     Φ = getpolynomes(order)
     dΦ_x = getpolynomes_dx(order)
     dΦ_y = getpolynomes_dy(order)
@@ -92,7 +92,7 @@ function nonsymmetricquad(
         x[(i-1)*3+2] = nodes[i,2]
         x[(i-1)*3+3] = weights[i]
     end
-    println(norm(int_f - getA(x, Φ) * x[3:3:end]))
+    #println(norm(int_f - getA(x, Φ) * x[3:3:end]))
     for k = (n-1):-1:1        
         delnode = x[(3*k+1):(3*k+3)]
         pop!(x)
@@ -146,8 +146,8 @@ function nonsymmetricquad(
                 x[(3*currentindex+1):(3*currentindex+3)], delnode = 
                     delnode, x[(3*currentindex+1):(3*currentindex+3)] 
             else
-                print("n-Points: ")
-                println(k)
+                #print("n-Points: ")
+                #println(k)
                 nodes = [x[1:3:3*(k)] x[2:3:3*(k)]]
                 weights = x[3:3:3*(k)]
                 break

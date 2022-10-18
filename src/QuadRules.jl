@@ -14,6 +14,7 @@ include("generalizednodeelimination/generalizednodeeliminationquad.jl")
 include("generalizednodeelimination/generalizednodeeliminationrect.jl")
 
 include("nodelimination/nodelimination.jl")
+include("nodelimination/contnodelimination.jl")
 
 include("symmetricquadrature/symquad.jl")
 
