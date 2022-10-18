@@ -40,6 +40,8 @@ export nestedsystem
 export gramschmidt
 
 export nonsymmetricquad
+export contnonsymmetricquad
+export initialquad
 
 export symquadratur
 export getcombinations
