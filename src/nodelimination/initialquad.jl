@@ -1,15 +1,5 @@
 using LinearAlgebra
-
-function getpolynomes(p::Int)
-    Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            ϕ(x,y) = legendre(i,x)*legendre(j,y)* sqrt((2*i + 1)/2)* sqrt((2*j + 1)/2)  
-            push!(Φ, ϕ)    
-        end
-    end
-    return Φ
-end
+using Base.Threads
 
 function getwA(nodes::Matrix, weights::Vector{T}, Φ) where {T <: AbstractFloat}
     

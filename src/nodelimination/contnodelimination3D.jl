@@ -1,129 +1,6 @@
 using LinearAlgebra
 using Base.Threads
 
-function fmat(fct, x::Vector{T}) where {T <: AbstractFloat}
-    F = zeros(T, length(fct))
-    for i in eachindex(fct)
-        for j = 1:4:length(x)
-            F[i] += fct[i](x[j], x[j+1], x[j+2])*x[j+3]
-        end
-    end
-
-    return F
-end
-
-function getpolynomes(p::Int)
-    Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            for k = 0:(p-(i+j))
-                ϕ(x,y,z) = legendre(i,x) * legendre(j,y) * legendre(k,z) 
-                    sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2) * sqrt((2*k + 1)/2)  
-                push!(Φ, ϕ)   
-            end 
-        end
-    end
-    return Φ
-end
-
-function getpolynomes_dx(p::Int)
-    Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            for k = 0:(p-(i+j))
-                ϕ(x,y,z) = (i + 1)/(1 - x^2) * (x * legendre(i, x) - legendre(i+1, x)) * 
-                    legendre(j,y) * legendre(k,z) *
-                    sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2) * sqrt((2*k + 1)/2)   
-                push!(Φ, ϕ)
-            end    
-        end
-    end
-    return Φ
-end
-
-function getpolynomes_dy(p::Int)
-    Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            for k = 0:(p-(i+j))
-                ϕ(x,y,z) = (j + 1)/(1 - y^2) * (y * legendre(j, y) - legendre(j+1, y)) * 
-                    legendre(i,x) * legendre(k,z) *
-                    sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2) * sqrt((2*k + 1)/2)
-                    push!(Φ, ϕ) 
-            end   
-        end
-    end
-    return Φ
-end
-
-function getpolynomes_dz(p::Int)
-    Φ=[]
-    for i = 0:p
-        for j = 0:p-i
-            for k = 0:(p-(i+j))
-                ϕ(x,y,z) = (k + 1)/(1 - z^2) * (z * legendre(k, y) - legendre(k+1, z)) * 
-                    legendre(i,x) * legendre(j,y) *
-                    sqrt((2*i + 1)/2) * sqrt((2*j + 1)/2) * sqrt((2*k + 1)/2)
-                    push!(Φ, ϕ) 
-            end   
-        end
-    end
-    return Φ
-end
-
-function jacobian(fdx, fdy, fdz, fdw, x::Vector{T}) where {T <: AbstractFloat}
-    J = zeros(T, length(fdx), length(x))
-    for i in eachindex(fdx)
-        for j = 1:4:length(x)
-            J[i, j] = fdx[i](x[j], x[j+1], x[j+2]) * x[j+3]
-            J[i, j+1] = fdy[i](x[j], x[j+1], x[j+2]) * x[j+3]
-            J[i, j+2] = fdz[i](x[j], x[j+1], x[j+2]) * x[j+3]
-            J[i, j+3] = fdw[i](x[j], x[j+1], x[j+2])
-        end
-    end
-    return J
-end
-
-function getA(x::Vector{T}, Φ) where {T <: AbstractFloat}
-    A = zeros(T, length(Φ), Int(length(x)/4))
-    for j = 1:Int(length(x)/4)
-        for i in eachindex(Φ)
-            A[i, j] = Φ[i](x[(j-1)*4+1], x[(j-1)*4+2], x[(j-1)*4+3])
-        end
-    end
-    return A
-end
-
-function checkinterior(x::Vector)
-    k = Int(length(x)/4)
-    @threads for i = 0:(k-1)
-        if abs(x[i*4+1]) >= 1
-            x[i*4+1] = sign(x[i*4+1])*0.99
-        end
-    end
-
-    @threads for i = 0:(k-1)
-        if abs(x[i*4+2]) >= 1
-            x[i*4+2] = sign(x[i*4+2])*0.99
-        end
-    end
-
-    @threads for i = 0:(k-1)
-        if abs(x[i*4+3]) >= 1
-            x[i*4+3] = sign(x[i*4+3])*0.99
-        end
-    end
-
-    @threads for i = 0:(k-1)
-        if x[i*4+4] < 0
-            x[i*4+4] = eps(Float64)
-        end
-    end
-
-    return x
-end
-
-
 function contnonsymmetricquad3D(
     nodes::Matrix{T},
     weights::Vector{T},
@@ -132,10 +9,10 @@ function contnonsymmetricquad3D(
 
     #print("Order: ")
     #println(order)
-    Φ = getpolynomes(order)
-    dΦ_x = getpolynomes_dx(order)
-    dΦ_y = getpolynomes_dy(order)
-    dΦ_z = getpolynomes_dz(order)
+    Φ = getpolynomes3D(order)
+    dΦ_x = getpolynomes_dx3D(order)
+    dΦ_y = getpolynomes_dy3D(order)
+    dΦ_z = getpolynomes_dz3D(order)
     int_f = zeros(T, length(Φ))
     int_f[1] = 8
 
@@ -146,7 +23,7 @@ function contnonsymmetricquad3D(
         x[(i-1)*4+3] = nodes[i,3]
         x[(i-1)*4+4] = weights[i]
     end
-    println(norm(int_f - (getA(x, Φ) * x[4:4:end])))
+    println(norm(int_f - (getA3D(x, Φ) * x[4:4:end])))
     totalfailed = false
     while !totalfailed
         totalfailed = true
@@ -193,16 +70,16 @@ function contnonsymmetricquad3D(
                 end
                 saverx .= x
                 iter = 0
-                ϵ = norm(int_f - (getA(x, Φ) * x[4:4:end] + fmat(Φ, delnode)))
+                ϵ = norm(int_f - (getA3D(x, Φ) * x[4:4:end] + fmat3D(Φ, delnode)))
                 λ = 0.01
                 while iter != 200 && !isapprox(ϵ, 0, atol=1e-14)
                     iter += 1
-                    F .= fmat(Φ, x) + fmat(Φ, delnode) - int_f
-                    J .= jacobian(dΦ_x, dΦ_y, dΦ_z, Φ, x)
+                    F .= fmat3D(Φ, x) + fmat3D(Φ, delnode) - int_f
+                    J .= jacobian3D(dΦ_x, dΦ_y, dΦ_z, Φ, x)
 
                     H .= transpose(J)*J 
                     xdiff = pinv((H + λ .* (diag(H).* Ient))) * transpose(J) * F
-                    ϵ1 = norm(int_f - (getA(x-xdiff, Φ) * x[4:4:end] + fmat(Φ, delnode)))
+                    ϵ1 = norm(int_f - (getA3D(x-xdiff, Φ) * x[4:4:end] + fmat3D(Φ, delnode)))
                 
                     if ϵ1 < ϵ
                         ϵ = ϵ1
@@ -219,7 +96,7 @@ function contnonsymmetricquad3D(
                         end
                     end
 
-                    x = checkinterior(x)
+                    x = checkinterior3D(x)
 
                    
                     

@@ -1,3 +1,4 @@
+using QuadRules
 
 function start()
     for order = 3:6

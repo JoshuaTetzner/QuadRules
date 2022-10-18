@@ -16,6 +16,7 @@ include("generalizednodeelimination/generalizednodeeliminationrect.jl")
 include("nodelimination/nodelimination.jl")
 include("nodelimination/contnodelimination.jl")
 include("nodelimination/initialquad.jl")
+include("nodelimination/base.jl")
 
 include("symmetricquadrature/symquad.jl")
 

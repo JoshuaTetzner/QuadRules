@@ -75,7 +75,7 @@ for i = 3:15
     println(i) 
     print("Points: ")
     println(length(weights))
-    nodes, weights = contnonsymmetricquad2(nodes, weights, i)
+    nodes, weights = contnonsymmetricquad(nodes, weights, i-1)
     print("cont.-Points: ")
     println(length(weights))
 end
