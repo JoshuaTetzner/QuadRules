@@ -80,3 +80,28 @@ for i = 3:15
     println(length(weights))
 end
 
+##
+for order = 8:13
+    print("\n Order: ")
+    println(order) 
+    cmin = order^2
+    min = Int(round(2*order))
+    max = Int(round(4*order)) 
+    for ord = min:max
+        nodes, weights = initialquad(order, ord)
+        if minimum(weights) > 0 && maximum(weights) < 4 
+            println(ord)
+            nodes, weights = nonsymmetricquad(nodes, weights, order)
+            print("Points: ")
+            println(length(weights))
+            nodes, weights = contnonsymmetricquad(nodes, weights, order)
+            print("cont.-Points: ")
+            println(length(weights))
+            if length(weights) <= cmin   
+                cmin = length(weights)
+                dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
+                save("nonsymmetricnew" * string(order) * ".jld2", dict)
+            end
+        end
+    end
+end

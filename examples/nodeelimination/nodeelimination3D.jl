@@ -11,30 +11,32 @@ nodes, weights = nonsymmetricquad3D(nodes, weights, order)
 #nodes2, weights2 = contnonsymmetricquad3D(nodes, weights, order)
 
 ##
-#length(weights2)
-nodes2
+order = 4
+ord = 10
+nodes, weights = initialquad3D(order, ord)
+println(ord)
+nodes, weights = nonsymmetricquad3D(nodes, weights, order)
+println(length(weights))
 
-# reconstruction of asymmetric cubatures for complete polynomials from order "a" upto order "b"
-# the significance indices can be selected in src/nodelimination/nodelimination.jl
-function asymcub(a::Int, b::Int)
-    order = a
-    points = Int(ceil((order+1)/2))
-    xa, wa = gausslegendre(points) 
-    nodes, weights = tensorrule(xa, wa, xa, wa, 2)
-    nodes, weights = nonsymmetricquad(nodes, weights, order)
-    dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
-    save("nonsymmetric" * string(order) * ".jld2", dict)
-
-    for order = (a+1):b
-        points = Int(ceil((order+1)/2))
-        xa, wa = gausslegendre(points) 
-        nodes, weights = tensorrule(xa, wa, xa, wa, 2)
-        nodes, weights = nonsymmetricquad(nodes, weights, order)
-        dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
-        save("nonsymmetric" * string(orderS) * ".jld2", dict)
+##
+for order = 3:7
+    print("\n Order: ")
+    println(order) 
+    cmin = order^2
+    min = Int(round(2*order))
+    max = 4*order 
+    for ord = min:max
+        nodes, weights = initialquad3D(order, ord)
+        println(ord)
+        nodes, weights = nonsymmetricquad3D(nodes, weights, order)
+        print("Points: ")
+        println(length(weights))
+        if length(weights) < cmin
+            cmin = length(weights)
+            dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
+            save("3Dnonsymmetric" * string(order) * ".jld2", dict)
+        end
     end
 end
-
-
 
 

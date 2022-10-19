@@ -28,8 +28,8 @@ function tensorrule3D(
     w1::Vector, 
     x2::Vector,
     w2::Vector, 
-    dim::Int
 ) 
+    dim = 3
     len = length(x) * length(x1) * length(x2)
     weights = ones(Float64, len)
     nodes = zeros(Float64, len, dim)
@@ -53,9 +53,9 @@ function tensorrule3DX(
     x::Matrix,
     w::Vector,
     x1::Vector,
-    w1::Vector, 
-    dim::Int
+    w1::Vector
 ) 
+    dim = 3
     len = length(w) * length(w1)
     weights = ones(Float64, len)
     nodes = zeros(Float64, len, dim)

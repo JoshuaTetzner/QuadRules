@@ -78,8 +78,8 @@ function nonsymmetricquad(
                 x[(3*currentindex+1):(3*currentindex+3)], delnode = 
                     delnode, x[(3*currentindex+1):(3*currentindex+3)] 
             else
-                print("n-Points: ")
-                println(k)
+                #print("n-Points: ")
+                #println(k)
                 nodes = [x[1:3:3*(k)] x[2:3:3*(k)]]
                 weights = x[3:3:3*(k)]
                 break
