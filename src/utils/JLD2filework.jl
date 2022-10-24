@@ -1,20 +1,20 @@
 using JLD2
 
-symquad = load("nonsymmetric15.jld2")
-for i = 16:23
-    dict = load("nonsymmetric" * string(i) * ".jld2")
+symquad = load("3Dnonsymmetric3.jld2")
+for i = 4:6
+    dict = load("3Dnonsymmetric" * string(i) * ".jld2")
     merge!(symquad, dict)
 end
-save("nonsymmetric.jld2", symquad)
+save("3Dnonsymmetric.jld2", symquad)
 
 #
-quadrature = load("nonsymmetric.jld2")
-for i = 15:23
+quadrature = load("3Dnonsymmetric.jld2")
+for i = 3:6
     nodes = quadrature[string(i)]["nodes"]
     weights = quadrature[string(i)]["weights"]
     println(i)
-    println(nodes)
-    println(weights)
+    #println(nodes)
+    #println(weights)
     println(length(weights))
 end
 

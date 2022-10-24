@@ -39,8 +39,8 @@ function contnonsymmetricquad(
         pop!(x)
         pop!(x)
         
-        print("n-Points: ")
-        println(length(x)/3 + 1)
+        #print("n-Points: ")
+        #println(length(x)/3 + 1)
         Ient = 1*Matrix(I, length(x), length(x)) 
         J = zeros(Float64, length(dΦ_x), length(x))
         H = zeros(Float64, length(x), length(x))
@@ -95,7 +95,7 @@ function contnonsymmetricquad(
                     iter += 1
                 end
 
-                if isapprox(ϵ, 0, atol=1e-14) && iter != 100
+                if isapprox(ϵ, 0, atol=1e-14) && iter != 50
                     if isapprox(delnode[3], 0)
                         println("eliminated")
                         break
@@ -106,7 +106,7 @@ function contnonsymmetricquad(
                         delnode[3] = delnode[3] / (1+factor)
                     end
                 else
-                    if factor < 1e-2
+                    if factor < 0.05
                         failed = true
                     else
                         x = saverx

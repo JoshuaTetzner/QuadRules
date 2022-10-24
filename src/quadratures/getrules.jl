@@ -85,7 +85,7 @@ function symmetriccubature(degree::Int)
         return xn, csplw[Int(ceil((degree - 4)/2))]
     end
 end
-##
+
 function asymmetriccubature(degree::Int)
     if degree < 3 || degree > 15
         throw(ASCExeptionDegree())
@@ -93,7 +93,7 @@ function asymmetriccubature(degree::Int)
         return cplxb[degree-2], cplwb[degree-2]
     end
 end
-##
+
 function generalizedquadrature(n::Int)
     rules = [15, 20, 25, 30]
     if n >= 3 && n <= 10

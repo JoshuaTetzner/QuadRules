@@ -7,8 +7,8 @@ function nonsymmetricquad3D(
     order::Int
 ) where {T <: AbstractFloat}
 
-    print("Order: ")
-    println(order)
+    #print("Order: ")
+    #println(order)
     Φ = getpolynomes3D(order)
     dΦ_x = getpolynomes_dx3D(order)
     dΦ_y = getpolynomes_dy3D(order)
@@ -28,7 +28,7 @@ function nonsymmetricquad3D(
     end
 
     ϵ = norm(int_f - getA3D(x, Φ) * x[4:4:end]) 
-    println(ϵ)
+    #println(ϵ)
     for k = (n-1):-1:1        
         delnode = x[(4*k+1):(4*k+4)]
         pop!(x)
@@ -53,7 +53,7 @@ function nonsymmetricquad3D(
             iter = 0
             ϵ = norm(int_f - getA3D(x, Φ) * x[4:4:(4*k)])
             λ = 0.1
-            println(currentindex)
+            #println(currentindex)
             while iter < 500 && !isapprox(ϵ, 0, atol=1e-14)
                 iter += 1
                 #J = jacobian(dΦ_x, dΦ_y, dΦ_z, Φ, x) 
@@ -91,7 +91,7 @@ function nonsymmetricquad3D(
                 x[(4*currentindex+1):(4*currentindex+4)], delnode = 
                     delnode, x[(4*currentindex+1):(4*currentindex+4)] 
             else
-                print("n-Points: ")
+                #print("n-Points: ")
                 println(k)
                 nodes = [x[1:4:4*(k)] x[2:4:4*(k)] x[3:4:4*(k)]]
                 weights = x[4:4:4*(k)]
