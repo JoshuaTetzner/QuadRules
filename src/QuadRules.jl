@@ -15,6 +15,8 @@ include("generalizednodeelimination/generalizednodeeliminationrect.jl")
 
 include("nodelimination/nodelimination.jl")
 include("nodelimination/contnodelimination.jl")
+include("nodelimination/nodelimination3D.jl")
+include("nodelimination/contnodelimination3D.jl")
 include("nodelimination/initialquad.jl")
 include("nodelimination/base.jl")
 
@@ -40,8 +42,22 @@ export nestedsystem
 export gramschmidt
 
 export nonsymmetricquad
+export nonsymmetricquad3D
 export contnonsymmetricquad
+export contnonsymmetricquad3D
 export initialquad
+export initialquad3D
+
+export fmat
+export fmat3D
+export getpolynomes, getpolynomes_dx, getpolynomes_dy
+export getpolynomes3D, getpolynomes_dx3D, getpolynomes_dy3D, getpolynomes_dz3D
+export getA
+export getA3D
+export jacobian
+export jacobian3D
+export checkinterior
+export checkinterior3D
 
 export symquadratur
 export getcombinations
@@ -60,5 +76,6 @@ export legendre
 export dlegendre
 
 export tensorrule
+export tensorrule3D
 
 end

@@ -23,7 +23,7 @@ function contnonsymmetricquad3D(
         x[(i-1)*4+3] = nodes[i,3]
         x[(i-1)*4+4] = weights[i]
     end
-    println(norm(int_f - (getA3D(x, Φ) * x[4:4:end])))
+    #println(norm(int_f - (getA3D(x, Φ) * x[4:4:end])))
     totalfailed = false
     while !totalfailed
         totalfailed = true
@@ -43,8 +43,8 @@ function contnonsymmetricquad3D(
         pop!(x)
         pop!(x)
         
-        print("n-Points: ")
-        println(length(x)/4 + 1)
+        #print("n-Points: ")
+        #println(length(x)/4 + 1)
         Ient = 1*Matrix(I, length(x), length(x)) 
         J = zeros(Float64, length(dΦ_x), length(x))
         H = zeros(Float64, length(x), length(x))
@@ -59,11 +59,11 @@ function contnonsymmetricquad3D(
         saver .= delnode
         for ind = 1:Int(length(x)/4)
             
-            print("Elim.-index: ")
-            println(elimind)
+            #print("Elim.-index: ")
+            #println(elimind)
             failed = false
             savex = x
-            factor = 0.1
+            factor = 0.2
             while !isapprox(delnode[4], 0) && !failed 
                 if delnode[4] <= 1e-4
                     delnode[4] = 0
@@ -72,7 +72,7 @@ function contnonsymmetricquad3D(
                 iter = 0
                 ϵ = norm(int_f - (getA3D(x, Φ) * x[4:4:end] + fmat3D(Φ, delnode)))
                 λ = 0.01
-                while iter != 200 && !isapprox(ϵ, 0, atol=1e-14)
+                while iter != 100 && !isapprox(ϵ, 0, atol=1e-14)
                     iter += 1
                     F .= fmat3D(Φ, x) + fmat3D(Φ, delnode) - int_f
                     J .= jacobian3D(dΦ_x, dΦ_y, dΦ_z, Φ, x)
@@ -88,7 +88,7 @@ function contnonsymmetricquad3D(
                             λ = λ / 5
                         end
                     else
-                        if λ < 1000
+                        if λ < 10
                             λ = λ * 4
                         else
                             iter = 200
@@ -97,12 +97,9 @@ function contnonsymmetricquad3D(
                     end
 
                     x = checkinterior3D(x)
-
-                   
-                    
                 end
-                println(delnode[4])
-                if isapprox(ϵ, 0, atol=1e-14)
+                #println(delnode[4])
+                if isapprox(ϵ, 0, atol=1e-14) 
                     if isapprox(delnode[4], 0)
                         println("eliminated")
                         break

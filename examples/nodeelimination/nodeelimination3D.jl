@@ -11,19 +11,19 @@ nodes, weights = nonsymmetricquad3D(nodes, weights, order)
 #nodes2, weights2 = contnonsymmetricquad3D(nodes, weights, order)
 
 ##
-order = 4
-ord = 10
+order = 3
+ord = 5
 nodes, weights = initialquad3D(order, ord)
 println(ord)
 nodes, weights = nonsymmetricquad3D(nodes, weights, order)
 println(length(weights))
 
 ##
-for order = 3:7
+for order = 5:5
     print("\n Order: ")
     println(order) 
     cmin = order^2
-    min = Int(round(2*order))
+    min = order
     max = 4*order 
     for ord = min:max
         nodes, weights = initialquad3D(order, ord)
@@ -35,8 +35,11 @@ for order = 3:7
             cmin = length(weights)
             dict = Dict{String, Any}(string(order) => Dict("weights" => weights, "nodes" => nodes))
             save("3Dnonsymmetric" * string(order) * ".jld2", dict)
-        end
+        end        
     end
 end
 
-
+##
+order = 3
+nodes, weights = initialquad3D(3, 15)
+println(minimum(weights))

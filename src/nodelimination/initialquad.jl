@@ -43,7 +43,7 @@ function initialquad(plorder, quadorder)
     Φ = getpolynomes(plorder)
     wA = getwA(nodes, weights, Φ)
     
-    _, _, p = qr(wA, ColumnNorm())
+    _, _, p = qr(wA, Val(true))#ColumnNorm())
     newnodes = zeros(Float64, length(Φ), 2)
     for (i, val) in enumerate(p[1:length(Φ)])
         newnodes[i,1] = x[(val-1)*3+1] 
@@ -102,7 +102,7 @@ function initialquad3D(plorder, quadorder)
     Φ = getpolynomes3D(plorder)
     wA = getwA3D(nodes, weights, Φ)
     
-    _, _, p = qr(wA, ColumnNorm())
+    _, _, p = qr(wA, Val(true))
     newnodes = zeros(Float64, length(Φ), 3)
     for (i, val) in enumerate(p[1:length(Φ)])
         newnodes[i,1] = x[(val-1)*4+1] 
@@ -112,7 +112,7 @@ function initialquad3D(plorder, quadorder)
     
     A = getA3D(newnodes, Φ)
     int = zeros(length(Φ))
-    int[1] = 2
+    int[1] = 8
     newweights = inv(A) * int
 
     return newnodes, newweights

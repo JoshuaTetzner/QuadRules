@@ -92,7 +92,7 @@ function nonsymmetricquad3D(
                     delnode, x[(4*currentindex+1):(4*currentindex+4)] 
             else
                 #print("n-Points: ")
-                #println(k)
+                println(k)
                 nodes = [x[1:4:4*(k)] x[2:4:4*(k)] x[3:4:4*(k)]]
                 weights = x[4:4:4*(k)]
                 break
